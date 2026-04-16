@@ -9,8 +9,12 @@ activityCompose = "1.8.0"
 kotlin = "2.2.10"
 composeBom = "2026.02.01"
 mlkitText = "19.0.1"
+mlkitTextChinese = "16.0.1"
+mlkitTextJapanese = "16.0.1"
+mlkitTextKorean = "16.0.1"
+mlkitTextDevanagari = "16.0.1"
 mlkitTranslate = "17.0.3"
-room = "2.6.1"
+room = "2.7.1"
 navCompose = "2.8.5"
 pdfbox = "2.0.27.0"
 lifecycleViewModelCompose = "2.8.7"
@@ -18,6 +22,7 @@ ksp = "2.3.6"
 fragment = "1.8.5"
 viewpager2 = "1.1.0"
 material = "1.12.0"
+coroutinesPlayServices = "1.7.3"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -36,6 +41,10 @@ androidx-compose-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-te
 androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3" }
 androidx-compose-material-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended" }
 mlkit-text-recognition = { group = "com.google.android.gms", name = "play-services-mlkit-text-recognition", version.ref = "mlkitText" }
+mlkit-text-recognition-chinese = { group = "com.google.android.gms", name = "play-services-mlkit-text-recognition-chinese", version.ref = "mlkitTextChinese" }
+mlkit-text-recognition-japanese = { group = "com.google.android.gms", name = "play-services-mlkit-text-recognition-japanese", version.ref = "mlkitTextJapanese" }
+mlkit-text-recognition-korean = { group = "com.google.android.gms", name = "play-services-mlkit-text-recognition-korean", version.ref = "mlkitTextKorean" }
+mlkit-text-recognition-devanagari = { group = "com.google.android.gms", name = "play-services-mlkit-text-recognition-devanagari", version.ref = "mlkitTextDevanagari" }
 mlkit-translate = { group = "com.google.mlkit", name = "translate", version.ref = "mlkitTranslate" }
 room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
 room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
@@ -46,6 +55,7 @@ androidx-lifecycle-viewmodel-compose = { group = "androidx.lifecycle", name = "l
 androidx-fragment-ktx = { group = "androidx.fragment", name = "fragment-ktx", version.ref = "fragment" }
 androidx-viewpager2 = { group = "androidx.viewpager2", name = "viewpager2", version.ref = "viewpager2" }
 google-material = { group = "com.google.android.material", name = "material", version.ref = "material" }
+kotlinx-coroutines-play-services = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-play-services", version.ref = "coroutinesPlayServices" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.TranslatePDF" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/dark_grey</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorPrimaryContainer">@color/dark_grey</item>
+        <item name="colorOnPrimaryContainer">@color/white</item>
+        <item name="colorSecondary">@color/white</item>
+        <item name="colorOnSecondary">@color/black</item>
+        <item name="colorSecondaryContainer">@color/dark_grey</item>
+        <item name="colorOnSecondaryContainer">@color/white</item>
+        <item name="colorTertiary">@color/white</item>
+        <item name="colorOnTertiary">@color/black</item>
+        <item name="colorTertiaryContainer">@color/dark_grey</item>
+        <item name="colorOnTertiaryContainer">@color/white</item>
+        <item name="colorSurface">@color/black</item>
+        <item name="colorOnSurface">@color/white</item>
+        <item name="colorSurfaceVariant">@color/dark_grey</item>
+        <item name="colorOnSurfaceVariant">@color/white</item>
+        <item name="colorSurfaceContainer">@color/dark_grey</item>
+        <item name="colorSurfaceContainerHigh">@color/dark_grey</item>
+        <item name="colorSurfaceContainerHighest">@color/dark_grey</item>
+        <item name="colorSurfaceContainerLow">@color/black</item>
+        <item name="colorSurfaceContainerLowest">@color/black</item>
+        <item name="colorOutline">@color/white</item>
+        <item name="colorOutlineVariant">@color/dark_grey</item>
+        <item name="android:statusBarColor">@color/dark_grey</item>
+        <item name="android:windowBackground">@color/black</item>
+    </style>
+</resources>

@@ -56,6 +56,10 @@ dependencies {
     
     // ML Kit
     implementation(libs.mlkit.text.recognition)
+    implementation(libs.mlkit.text.recognition.chinese)
+    implementation(libs.mlkit.text.recognition.japanese)
+    implementation(libs.mlkit.text.recognition.korean)
+    implementation(libs.mlkit.text.recognition.devanagari)
     implementation(libs.mlkit.translate)
     
     // Room
@@ -69,6 +73,9 @@ dependencies {
     
     // PDF
     implementation(libs.pdfbox.android)
+
+    // Coroutines
+    implementation(libs.kotlinx.coroutines.play.services)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

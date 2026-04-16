@@ -1,7 +1,9 @@
 package com.dariuszkrych.translatepdf.ui.fragments
 
 import android.content.Context
+import android.content.Intent
 import android.content.res.Configuration
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -50,6 +52,14 @@ class SettingsFragment : Fragment() {
                                             Configuration.UI_MODE_NIGHT_MASK
                                     uiMode == Configuration.UI_MODE_NIGHT_YES
                                 }
+                            }
+                        },
+                        onReviewClick = {
+                            val packageName = requireContext().packageName
+                            try {
+                                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=$packageName")))
+                            } catch (_: Exception) {
+                                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=$packageName")))
                             }
                         }
                     )

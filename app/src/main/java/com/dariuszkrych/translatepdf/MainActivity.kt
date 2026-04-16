@@ -10,14 +10,22 @@ import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.view.WindowCompat
+import androidx.lifecycle.lifecycleScope
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.dariuszkrych.translatepdf.ui.fragments.HistoryFragment
 import com.dariuszkrych.translatepdf.ui.fragments.HomeFragment
 import com.dariuszkrych.translatepdf.ui.fragments.LanguagesFragment
+import com.dariuszkrych.translatepdf.ui.fragments.PdfViewerFragment
 import com.dariuszkrych.translatepdf.ui.fragments.SettingsFragment
 import com.dariuszkrych.translatepdf.ui.theme.ThemeState
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.net.HttpURLConnection
+import java.net.URL
 
 class MainActivity : AppCompatActivity() {
 
@@ -45,7 +53,7 @@ class MainActivity : AppCompatActivity() {
         viewPager.adapter = adapter
 
         bottomNavigation.setOnItemSelectedListener { item ->
-            closeSettingsIfOpen()
+            closeOverlayIfOpen()
             when (item.itemId) {
                 R.id.navigation_home -> viewPager.currentItem = 0
                 R.id.navigation_languages -> viewPager.currentItem = 1
@@ -91,13 +99,16 @@ class MainActivity : AppCompatActivity() {
         if (savedInstanceState?.getBoolean("settings_open") == true) {
             showSettings()
         }
+
+        updateSystemBars()
+        checkForUpdates()
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
         ThemeState.isDark = (newConfig.uiMode and Configuration.UI_MODE_NIGHT_MASK) ==
                 Configuration.UI_MODE_NIGHT_YES
-        updateViewColors()
+        updateSystemBars()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -106,12 +117,25 @@ class MainActivity : AppCompatActivity() {
         outState.putBoolean("settings_open", container.visibility == View.VISIBLE)
     }
 
-    private fun updateViewColors() {
-        val isDark = ThemeState.isDark
+    fun showPdfViewer() {
+        val container = findViewById<FrameLayout>(R.id.settingsContainer)
+        container.visibility = View.VISIBLE
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.settingsContainer, PdfViewerFragment())
+            .addToBackStack("pdfViewer")
+            .commit()
+    }
 
+    fun hidePdfViewer() {
+        val container = findViewById<FrameLayout>(R.id.settingsContainer)
+        container.visibility = View.GONE
+        supportFragmentManager.popBackStack()
+    }
+
+    private fun updateSystemBars() {
+        val isDark = ThemeState.isDark
         val bgColor = if (isDark) getColor(R.color.dark_grey) else getColor(R.color.light_grey)
         val textColor = if (isDark) getColor(R.color.white) else getColor(R.color.black)
-        val windowBg = if (isDark) getColor(R.color.black) else getColor(R.color.white)
 
         val toolbar = findViewById<com.google.android.material.appbar.MaterialToolbar>(R.id.toolbar)
         toolbar.setBackgroundColor(bgColor)
@@ -122,18 +146,15 @@ class MainActivity : AppCompatActivity() {
         bottomNavigation.itemIconTintList = ColorStateList.valueOf(textColor)
         bottomNavigation.itemTextColor = ColorStateList.valueOf(textColor)
 
-        val settingsContainer = findViewById<FrameLayout>(R.id.settingsContainer)
-        settingsContainer.setBackgroundColor(windowBg)
-
         @Suppress("DEPRECATION")
         window.statusBarColor = bgColor
-        window.setBackgroundDrawable(ColorDrawable(windowBg))
+        window.setBackgroundDrawable(ColorDrawable(if (isDark) getColor(R.color.black) else getColor(R.color.white)))
 
         WindowCompat.getInsetsController(window, window.decorView)
             .isAppearanceLightStatusBars = !isDark
     }
 
-    private fun closeSettingsIfOpen() {
+    private fun closeOverlayIfOpen() {
         val container = findViewById<FrameLayout>(R.id.settingsContainer)
         if (container.visibility == View.VISIBLE) {
             container.visibility = View.GONE
@@ -158,6 +179,37 @@ class MainActivity : AppCompatActivity() {
             .replace(R.id.settingsContainer, SettingsFragment())
             .addToBackStack(null)
             .commit()
+    }
+
+    private fun checkForUpdates() {
+        val versionCheckUrl = "https://raw.githubusercontent.com/dariuszkrych/TranslatePDF_Android/main/version.json"
+
+        lifecycleScope.launch(Dispatchers.IO) {
+            try {
+                val url = URL(versionCheckUrl)
+                val connection = url.openConnection() as HttpURLConnection
+                connection.connectTimeout = 5000
+                connection.readTimeout = 5000
+                val response = connection.inputStream.bufferedReader().readText()
+                connection.disconnect()
+
+                // Simple JSON parsing for {"latest":"1.0","url":"..."}
+                val latestVersion = Regex("\"latest\"\\s*:\\s*\"([^\"]+)\"").find(response)?.groupValues?.get(1)
+                val currentVersion = packageManager.getPackageInfo(packageName, 0).versionName
+
+                if (latestVersion != null && latestVersion != currentVersion) {
+                    withContext(Dispatchers.Main) {
+                        MaterialAlertDialogBuilder(this@MainActivity)
+                            .setTitle("Update Available")
+                            .setMessage("A new version ($latestVersion) is available. You are using $currentVersion.")
+                            .setPositiveButton("OK", null)
+                            .show()
+                    }
+                }
+            } catch (_: Exception) {
+                // Silently ignore - offline is fine
+            }
+        }
     }
 
     private inner class ViewPagerAdapter(activity: AppCompatActivity) : FragmentStateAdapter(activity) {
