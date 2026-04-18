@@ -18,26 +18,42 @@
         android:id="@+id/viewPager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/bottomNavigation"
+        android:layout_above="@+id/bottomContainer"
         android:layout_below="@id/toolbar" />
 
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bottomNavigation"
+    <!-- Wraps the bottom nav plus a thin underline View that we position under
+         the currently selected tab from code. -->
+    <FrameLayout
+        android:id="@+id/bottomContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:background="?attr/colorPrimary"
-        app:itemIconTint="?attr/colorOnPrimary"
-        app:itemTextColor="?attr/colorOnPrimary"
-        app:itemActiveIndicatorStyle="@null"
-        app:menu="@menu/bottom_nav_menu" />
+        android:layout_alignParentBottom="true">
+
+        <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/bottomNavigation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/colorPrimary"
+            app:itemIconTint="?attr/colorOnPrimary"
+            app:itemTextColor="?attr/colorOnPrimary"
+            app:itemActiveIndicatorStyle="@null"
+            app:menu="@menu/bottom_nav_menu" />
+
+        <!-- Underline strip drawn on top of the selected tab. Width/X are set at
+             runtime; color is repainted when the theme changes. -->
+        <View
+            android:id="@+id/bottomNavIndicator"
+            android:layout_width="0dp"
+            android:layout_height="3dp"
+            android:layout_gravity="top|start" />
+    </FrameLayout>
 
     <FrameLayout
         android:id="@+id/settingsContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/toolbar"
-        android:layout_above="@id/bottomNavigation"
+        android:layout_above="@id/bottomContainer"
         android:background="?android:attr/windowBackground"
         android:clickable="true"
         android:focusable="true"

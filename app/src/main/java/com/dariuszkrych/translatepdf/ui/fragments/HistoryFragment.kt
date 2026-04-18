@@ -12,8 +12,13 @@ import com.dariuszkrych.translatepdf.TranslationViewModel
 import com.dariuszkrych.translatepdf.ui.screens.HistoryScreen
 import com.dariuszkrych.translatepdf.ui.theme.TranslatePDFTheme
 
+/**
+ * Third ViewPager tab — displays previously completed translations from the
+ * Room database, with search, delete, and tap-to-reopen support.
+ */
 class HistoryFragment : Fragment() {
 
+    // Activity-scoped VM so we see the same history/search state as the rest of the app.
     private val viewModel: TranslationViewModel by activityViewModels()
 
     override fun onCreateView(
@@ -21,16 +26,19 @@ class HistoryFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        // Host the Compose HistoryScreen and wire each callback to the ViewModel.
         return ComposeView(requireContext()).apply {
             setContent {
                 TranslatePDFTheme {
                     HistoryScreen(
                         records = viewModel.historyRecords,
                         searchQuery = viewModel.historySearch,
+                        // Each keystroke updates the query and triggers a fresh DB lookup.
                         onSearchChanged = {
                             viewModel.historySearch = it
                             viewModel.loadHistory()
                         },
+                        // Tapping a row re-renders that PDF and opens the viewer overlay.
                         onRecordClick = {
                             viewModel.openTranslatedPdf(it)
                             (requireActivity() as MainActivity).showPdfViewer()
@@ -42,6 +50,10 @@ class HistoryFragment : Fragment() {
         }
     }
 
+    /**
+     * Reload the history list every time the tab becomes visible so newly
+     * completed translations show up immediately without navigating away and back.
+     */
     override fun onResume() {
         super.onResume()
         viewModel.loadHistory()

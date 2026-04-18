@@ -1,0 +1,243 @@
+# TranslatePDF - Offline PDF Translation App
+
+## Abstract
+
+TranslatePDF is a native Android app that translates PDFs on-device, rendering text in-place
+to preserve layouts.
+Users open a PDF through Android's file picker intent, select source and target languages,
+select direct or OCR text extraction and receive a fully translated PDF file.
+Uses Fragments to implement each screen and follows Material Design 3 guidelines.
+The app performs an HTTP version check on startup to check for app updates.
+Translation history is saved locally using SQLite.
+TranslatePDF ensures a secure, offline-first experience, offering a seamless mobile workflow
+for translating foreign language PDF documents.
+**Problem Statement**
+Researchers, readers and travellers frequently encounter PDF documents written in foreign
+languages which they would like to read. For example, comics, manga, books, academic
+papers, official forms, travel guides and instruction manuals.
+Current solutions present several issues:
+
+- Online-only Such as Google Translate web which requires a constant internet
+    connection, which is unreliable in many real-world contexts such as travel, rural
+    areas, or institutions with restricted networks.
+- Desktop based translation tools are not accessible on the go and break the mobile
+    workflow.
+- Manual workflows from PDFs copy pasting or using OCR and then manually passing
+    text into translation apps is tedious, error prone, and is very disruptive for any reading
+    experience.
+- Privacy concerns arise when uploading sensitive documents (medical records, legal
+    papers, academic work) to cloud-based translation services.
+There is a clear need for a mobile-first, offline-capable PDF translation tool that keeps data
+on-device while providing fast, practical translations.
+
+
+**Proposed Solution**
+TranslatePDF solves this problem by combining Android's built-in PDF rendering capabilities
+with Google ML Kit's on-device translation API.
+The core workflow is:
+
+1. Opening a PDF:
+The user selects a PDF file using an open document intent.
+2. Language Pair Selection:
+The user picks a source and target language pair.
+3. Text Extraction:
+The user chooses whether to use direct or OCR (Optical Character Recognition) based text
+extraction.
+Direct using PDFBox through the TomRoush/PdfBox-Android port.
+OCR using the Google ML Kit with an OCR model.
+4. Translation:
+The extracted text along with the position for each block of text is passed in. Each block of
+text is translated on device using the selected previously downloaded Google ML Kit
+translation models.
+5. Generating Translated PDF:
+A new PDF is created which is the input PDF with the translated text drawn on top.
+6. Viewing, Saving & Sharing:
+The translated PDF is displayed in-app using Android's `PdfRenderer` and can be saved to
+local storage or shared. A record is saved to the local SQLite database for future reference.
+7. Managing Language Packs:
+A dedicated screen which allows users to browse, download, and delete languages for
+translation with the size of each language being displayed in mb.
+**HCI Design Considerations**
+TranslatePDF implements key HCI and UX best practices:
+Simplicity: Interfaces focus on a single primary action per screen.
+Touch-Friendly: Adheres to Material Design's minimum touch targets, keeping navigation
+and core controls in comfortable thumb-reach zones for one-handed use.
+Micro-Moments: Optimised for rapid "I-want-to-do" tasks, ensuring the workflow from file
+selection to translated output takes three taps or fewer.
+Offline-First: Fully functional without an internet connection. Prominent UI elements clearly
+display network status and prompt users to download missing language packs via a simple,
+one-tap action showing file size.
+
+
+**Key Features**
+Feature Description
+PDF File Import Open PDFs via file picker intent.
+Dual Text Extraction
+Choose between direct text extraction (via PDFBox) for standard
+documents or OCR (via ML Kit) for scanned documents.
+PDF-to-PDF Translation
+Produces a new PDF with translated text drawn in-place,
+preserving the original document layout.
+On-Device Translation
+Translate text using Google ML Kit without sending data to
+external servers.
+Language Pack Manager
+Browse, download, and delete language packs; shows download
+size and status.
+In-App PDF Viewer View both original and translated PDFs.
+Translation History SQLite-backed list of past translations with search and filtering.
+Save & Share Translated
+PDF
+Save the translated PDF to device storage or share via implicit
+intents.
+Dark Mode Support
+Respects system themes using Material Design 3 dynamic
+theming. Can be overridden by user theme selection in options.
+Offline-First Design
+Full functionality without an internet connection once language
+packs are downloaded.
+**Technology Stack**
+Technology Purpose
+Kotlin Primary development language.
+Google ML Kit Translation
+On-device neural machine translation with downloadable
+language packs.
+Google ML Kit Text Recognition
+(OCR)
+On-device optical character recognition used to extract
+text and bounding boxes from scanned PDFs
+PdfBox-Android
+PDFBox port for Android, handles direct text extraction
+with positional data (coordinates, font size) and
+generates new PDFs with translated text drawn at the
+original positions.
+Android PdfRenderer
+Native API for rendering translated PDF pages as
+bitmaps for the in-app viewer
+Material Design 3
+UI component library ensuring consistent, accessible,
+and modern interface design
+Jetpack ViewModel + LiveData
+MVVM architecture for clean separation of UI and
+business logic
+Room (SQLite wrapper) Type-safe database access built on top of SQLite
+
+
+**Wireframe Diagrams**
+
+Home View
+
++----------------------------------+
+|  TranslatePDF            [gear]  |
++----------------------------------+
+|                                  |              1
+|    +------------------------+    |              2
+|    |                        |    |              3
+|    |   [PDF icon]           |    |              4
+|    |   Open a PDF           |    |              5
+|    |   Tap to select file   |    |              6
+|    |   to translate.        |    |              7
+|    |                        |    |              8
+|    |                        |    |              9
+|    +------------------------+    |              10
+|                                  |              11
+|                                  |              12
+| +------------------------------+ |              13
+| |      Select PDF text         | |              14
+| |      extraction method       | |              15
+| |  +---------+     +--------+  | |              16
+| |  |  |OCR|  |     | Direct |  | |              17
+| |  +---------+     +--------+  | |              18
+| +------------------------------+ |              19
+|                                  |              20
++----------------------------------+
+| [|Home|]  [Languages]  [History] |
++----------------------------------+
+
+Languages View
+
++----------------------------------+
+|  TranslatePDF            [gear]  |
++----------------------------------+
+|  +----------------------------+  |
+|  |Select Translation Languages|  |
+|  | [EN]     [----->]     [MT] |  |
+|  +----------------------------+  |
+|                                  |
+|  Downloaded                      |
+|  +----------------------------+  |
+|  | English            [check] |  |
+|  | 28 MB - Installed          |  |
+|  +----------------------------+  |
+|  | Spanish            [check] |  |
+|  | 31 MB - Installed          |  |
+|  +----------------------------+  |
+|                                  |
+|  Available                       |
+|  +----------------------------+  |
+|  | Maltese         [download] |  |
+|  | 29 MB                      |  |
+|  +----------------------------+  |
+|  | ...more languages...       |  |
+|                                  |
++----------------------------------+
+| [Home]  [|Languages|]  [History] |
++----------------------------------+
+
+History View
+
++----------------------------------+
+|  TranslatePDF            [gear]  |
++----------------------------------+
+|                                  |
+|    +------------------------+    |
+|    | Type to search history |    |
+|    +------------------------+    |
+|                                  |
+|    Recent Translations           |
+|    +------------------------+    |
+|    | document_es.pdf        |    |
+|    | Spanish -> Polish      |    |
+|    | 17 Apr 2027            |    |
+|    +------------------------+    |
+|    | report_de.pdf          |    |
+|    | German -> English      |    |
+|    | 14 Apr 2027            |    |
+|    +------------------------+    |
+|    | tallinja_mt.pdf        |    |
+|    | Maltese -> English     |    |
+|    | 14 Apr 2027            |    |
+|    +------------------------+    |
+|                                  |
++----------------------------------+
+| [Home]  [Languages]  [|History|] |
++----------------------------------+
+
+Settings View
+
++----------------------------------+
+|  TranslatePDF          [|gear|]  |
++----------------------------------+
+|                                  |
+|    Select Theme                  |
+|    +------------------------+    |
+|    | System | Dark | Light  |    |
+|    +------------------------+    |
+|                                  |
+|    Send a Review                 |
+|    +------------------------+    |
+|    | Click here to review   |    |
+|    +------------------------+    |
+|                                  |
+|                                  |
+|                                  |
+|                                  |
+|                                  |
+|                                  |
+|    Thank you for using           |
+|    TranslatePDF. ^^              |
+|                                  |
+|                                  |
++----------------------------------+
+| [Home]   [Languages]   [History] |
++----------------------------------+

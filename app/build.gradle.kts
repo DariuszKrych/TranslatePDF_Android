@@ -37,6 +37,8 @@ android {
     }
     buildFeatures {
         compose = true
+        // Needed so `BuildConfig.VERSION_CODE` is generated for the update check.
+        buildConfig = true
     }
 }
 
