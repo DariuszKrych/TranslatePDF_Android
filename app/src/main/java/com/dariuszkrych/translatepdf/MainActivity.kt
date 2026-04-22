@@ -42,7 +42,7 @@ class MainActivity : AppCompatActivity() {
     private val viewModel: TranslationViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        // ── Apply the saved theme BEFORE super.onCreate so the first frame is already correct ──
+        // Apply the saved theme BEFORE super.onCreate so the first frame is already correct
         val prefs = getSharedPreferences("app_prefs", MODE_PRIVATE)
         when (prefs.getString("theme", "system")) {
             "dark" -> AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)

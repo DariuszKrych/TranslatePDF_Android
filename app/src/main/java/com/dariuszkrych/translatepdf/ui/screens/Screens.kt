@@ -243,7 +243,7 @@ fun LanguagesScreen(
             ) {
                 AssistChip(
                     onClick = { showSourcePicker.value = true },
-                    // Show "???" when nothing is picked yet for clear affordance.
+                    // Show "???" when nothing is picked yet.
                     label = { Text(if (sourceLang.isNotEmpty()) sourceLang.uppercase() else "???") }
                 )
 //                Text(
@@ -258,7 +258,7 @@ fun LanguagesScreen(
                 )
                 AssistChip(
                     onClick = { showTargetPicker.value = true },
-                    // Show "???" when nothing is picked yet for clear affordance.
+                    // Show "???" when nothing is picked yet.
                     label = { Text(if (targetLang.isNotEmpty()) targetLang.uppercase() else "???") }
                 )
             }
@@ -281,8 +281,12 @@ fun LanguagesScreen(
                         ListItem(
                             headlineContent = { Text(lang.name) },
                             supportingContent = {
-                                // Display the model size in MB with appropriate precision.
-                                if (lang.sizeMb > 0f) {
+                                // English is the ML Kit NMT pivot — it's always present
+                                // and shares bytes with every other language pair, so
+                                // there isn't a meaningful standalone size to show.
+                                if (lang.code == "en") {
+                                    Text("Core Pre-Installed")
+                                } else if (lang.sizeMb > 0f) {
                                     val sizeStr = if (lang.sizeMb >= 1f) {
                                         "%.1f MB".format(lang.sizeMb)
                                     } else {
@@ -300,7 +304,15 @@ fun LanguagesScreen(
                                         Icon(Icons.Default.Delete, contentDescription = "Delete")
                                     }
                                 } else {
-                                    Icon(Icons.Default.Check, contentDescription = null)
+                                    // Match IconButton's 40dp default so the check lines up
+                                    // visually with the Delete icon on neighboring rows.
+                                    // Still was a bit off visually so added another 3dp.
+                                    Box(
+                                        modifier = Modifier.size(45.dp),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Icon(Icons.Default.Check, contentDescription = null)
+                                    }
                                 }
                             }
                         )
@@ -328,7 +340,12 @@ fun LanguagesScreen(
                             trailingContent = {
                                 // Spinner while in-flight, otherwise a download button.
                                 if (lang.code in downloadingLangs) {
-                                    CircularProgressIndicator(modifier = Modifier.size(24.dp))
+                                    Box(
+                                        modifier = Modifier.size(45.dp),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        CircularProgressIndicator(modifier = Modifier.size(24.dp))
+                                    }
                                 } else {
                                     IconButton(onClick = { onDownload(lang.code) }) {
                                         Icon(Icons.Default.Download, contentDescription = "Download")

@@ -1,6 +1,7 @@
 package com.dariuszkrych.translatepdf
 
 import android.app.Application
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
@@ -94,8 +95,13 @@ class TranslationViewModel(application: Application) : AndroidViewModel(applicat
     // Room database handle and ML Kit remote-model manager (for language packs).
     private val db = TranslationDatabase.get(application)
     private val modelManager = RemoteModelManager.getInstance()
+    // Persistent per-language size cache. ML Kit has no public API for model
+    // size and its on-disk layout isn't stable across versions, so we record
+    // the actual byte delta at download time and keep it here. Keys are
+    // "size_<code>" → Float MB.
+    private val modelSizePrefs = application.getSharedPreferences("ml_model_sizes", Context.MODE_PRIVATE)
 
-    // ── Observable UI state (Compose `mutableStateOf` — UI recomposes on write) ──
+    // Observable UI state (Compose `mutableStateOf` — UI recomposes on write)
 
     // Every language ML Kit supports, annotated with download state and size.
     var allLanguages by mutableStateOf<List<LanguageInfo>>(emptyList())
@@ -134,11 +140,19 @@ class TranslationViewModel(application: Application) : AndroidViewModel(applicat
         private set
     var historySearch by mutableStateOf("")
 
-    // Language codes that are currently being downloaded — drives the spinners.
+    // Language codes that are currently being downloaded or queued for download —
+    // drives the spinners. Queued langs show a spinner too, even though only one
+    // runs at a time (see the download queue below).
     var downloadingLangs by mutableStateOf<Set<String>>(emptySet())
         private set
 
-    // ── Update-check state (hybrid HTTP check + Play Store intent) ──
+    // FIFO queue for serialising ML Kit model downloads. Concurrent downloads
+    // confuse the byte-delta measurement (bytesAfter for download A ends up
+    // including bytes pulled by download B), so we run exactly one at a time.
+    private val downloadQueue = ArrayDeque<String>()
+    private var activeDownload: String? = null
+
+    // Update-check state (hybrid HTTP check + Play Store intent)
     // Flipped to true when version.json on GitHub reports a higher versionCode
     // than the installed build; drives the Settings "Update available" banner.
     var updateAvailable by mutableStateOf(false)
@@ -157,7 +171,7 @@ class TranslationViewModel(application: Application) : AndroidViewModel(applicat
         refreshLanguages()
     }
 
-    // ── Language management ──────────────────────────────────────────────
+    // Language management
 
     /**
      * Rebuild `allLanguages` from ML Kit's supported list, marking which ones
@@ -168,8 +182,10 @@ class TranslationViewModel(application: Application) : AndroidViewModel(applicat
             .addOnSuccessListener { downloadedModels ->
                 // Set of codes that have a local model already installed.
                 val downloadedCodes = downloadedModels.map { it.language }.toSet()
-                // Approximate MB-per-code found by scanning the app data dir.
-                val modelSizes = getDownloadedModelSizes()
+                // Per-language MB: read from the cache we maintain at download time,
+                // with a one-time estimate for any language that was already on disk
+                // before this build started recording deltas.
+                val modelSizes = resolveModelSizes(downloadedCodes)
                 // Produce one LanguageInfo per supported code, sorted by display name.
                 allLanguages = TranslateLanguage.getAllLanguages().map { code ->
                     LanguageInfo(
@@ -183,66 +199,118 @@ class TranslationViewModel(application: Application) : AndroidViewModel(applicat
     }
 
     /**
-     * Walk the app's data directory looking for ML Kit translation model folders
-     * and sum the file sizes inside each one. There's no official API for this, so
-     * we heuristically find directories whose path contains both "translate" and "model".
+     * Return the recorded size for every currently-downloaded language.
+     *
+     * Sizes are written at download time by diffing the ML Kit models directory
+     * byte count before and after the download task completes. That is the only
+     * reliable way to attribute bytes to a language: ML Kit ships no public API
+     * for per-model size, and its on-disk layout (directory naming, nesting,
+     * shared assets) varies enough across releases that any filename-matching
+     * heuristic ends up crediting the wrong language most of the time.
+     *
+     * For any code that exists on disk but has no recorded size (e.g. it was
+     * downloaded by a previous build before tracking was added), distribute the
+     * still-unaccounted-for bytes equally across those codes. That estimate is
+     * then cached so it stays stable on subsequent refreshes.
      */
-    private fun getDownloadedModelSizes(): Map<String, Float> {
-        val sizes = mutableMapOf<String, Float>()
-        val context = getApplication<Application>()
+    private fun resolveModelSizes(downloadedCodes: Set<String>): Map<String, Float> {
+        val result = mutableMapOf<String, Float>()
+        if (downloadedCodes.isEmpty()) return result
 
-        // ML Kit stores its models under /data/data/<pkg>/... — start from the package root.
-        val appDataDir = context.filesDir.parentFile ?: return sizes
-        val candidates = mutableListOf<File>()
+        val missing = mutableListOf<String>()
+        for (code in downloadedCodes) {
+            val stored = modelSizePrefs.getFloat(prefKey(code), -1f)
+            if (stored >= 0f) result[code] = stored else missing.add(code)
+        }
 
-        // Breadth-limited walk to avoid pathological nesting; 6 levels is plenty here.
+        if (missing.isNotEmpty()) {
+            val totalMb = getTotalModelsBytes() / (1024f * 1024f)
+            val accountedMb = result.values.sum()
+            val leftoverMb = (totalMb - accountedMb).coerceAtLeast(0f)
+            val perMissingMb = if (missing.isNotEmpty()) leftoverMb / missing.size else 0f
+            val editor = modelSizePrefs.edit()
+            for (code in missing) {
+                result[code] = perMissingMb
+                // Cache so the estimate doesn't shift across refreshes.
+                editor.putFloat(prefKey(code), perMissingMb)
+            }
+            editor.apply()
+        }
+        return result
+    }
+
+    /** Total bytes occupied by every ML Kit translate-models directory on disk. */
+    private fun getTotalModelsBytes(): Long {
+        val appDataDir = getApplication<Application>().filesDir.parentFile ?: return 0L
+        var total = 0L
         appDataDir.walkTopDown()
             .maxDepth(6)
             .filter { it.isDirectory }
-            .forEach { dir ->
-                val pathLower = dir.absolutePath.lowercase()
-                if (pathLower.contains("translate") && pathLower.contains("model")) {
-                    candidates.add(dir)
-                }
+            .filter {
+                val n = it.name.lowercase()
+                n.contains("mlkit") && n.contains("translate") && n.contains("model")
             }
-
-        // For every candidate, list its children (one per language) and sum their file sizes.
-        for (modelsDir in candidates) {
-            modelsDir.listFiles()?.forEach { langDir ->
-                if (langDir.isDirectory) {
-                    val totalBytes = langDir.walkTopDown().filter { it.isFile }.sumOf { it.length() }
-                    val mb = totalBytes / (1024f * 1024f)
-                    if (mb > 0.01f) {
-                        // The subfolder name is typically the BCP-47 language code.
-                        val code = langDir.name.lowercase()
-                        // Ignore anything that isn't actually a known ML Kit language.
-                        if (TranslateLanguage.getAllLanguages().contains(code)) {
-                            val existing = sizes[code] ?: 0f
-                            // If multiple candidate dirs contain the same code, keep the larger estimate.
-                            if (mb > existing) sizes[code] = mb
-                        }
-                    }
-                }
+            .forEach { root ->
+                total += root.walkTopDown().filter { it.isFile }.sumOf { it.length() }
             }
-        }
-        return sizes
+        return total
     }
 
-    /** Kick off an offline model download for the given language code. */
+    private fun prefKey(code: String) = "size_${code.lowercase()}"
+
+    /**
+     * Enqueue an offline model download. Downloads run serially: only one is
+     * in-flight at a time, subsequent taps are queued behind it. This keeps
+     * the before/after byte-delta clean so each language's size is recorded
+     * against its own download and no other.
+     */
     fun downloadLanguage(code: String) {
-        // Add to downloading set so the UI shows a spinner for this row.
+        // Ignore duplicate taps — already active or already queued.
+        if (code == activeDownload || code in downloadQueue) return
+        // Spinner state reflects "pending OR running" so the UI reacts immediately.
         downloadingLangs = downloadingLangs + code
+        downloadQueue.addLast(code)
+        startNextDownloadIfIdle()
+    }
+
+    /** Pop the next queued download and run it. No-op if one is already running. */
+    private fun startNextDownloadIfIdle() {
+        if (activeDownload != null) return
+        val code = downloadQueue.removeFirstOrNull() ?: return
+        activeDownload = code
+
         val model = TranslateRemoteModel.Builder(code).build()
         // `DownloadConditions.Builder().build()` with no requirements = allow cellular data.
         val conditions = DownloadConditions.Builder().build()
+        // Snapshot disk usage right before kicking off the download so the delta
+        // attributed to this language excludes every prior download's bytes.
+        val bytesBefore = getTotalModelsBytes()
         modelManager.download(model, conditions)
             .addOnSuccessListener {
+                val bytesAfter = getTotalModelsBytes()
+                val deltaMb = ((bytesAfter - bytesBefore).coerceAtLeast(0L)) / (1024f * 1024f)
+                // First-install wins: record the delta only the first time we ever
+                // measure one for this code. ML Kit retains shared tokenizer /
+                // pivot metadata across delete+reinstall cycles, so the initial
+                // install's delta is the honest on-disk cost; later re-installs
+                // measure a smaller-than-real marginal number. Freezing the first
+                // value keeps the UI consistent across any sequence of
+                // delete/reinstall operations.
+                val alreadyRecorded = modelSizePrefs.contains(prefKey(code))
+                if (!alreadyRecorded && deltaMb > 0.05f) {
+                    modelSizePrefs.edit().putFloat(prefKey(code), deltaMb).apply()
+                }
                 downloadingLangs = downloadingLangs - code
-                refreshLanguages() // Refresh to flip the row from "Available" to "Downloaded".
+                activeDownload = null
+                refreshLanguages() // Flip the row from "Available" to "Downloaded".
+                startNextDownloadIfIdle()
             }
             .addOnFailureListener {
-                // Remove from spinner set regardless of failure so the UI isn't stuck.
+                // Clear both the spinner and the active slot so the queue advances
+                // even when a single download fails.
                 downloadingLangs = downloadingLangs - code
+                activeDownload = null
+                startNextDownloadIfIdle()
             }
     }
 
@@ -250,10 +318,17 @@ class TranslationViewModel(application: Application) : AndroidViewModel(applicat
     fun deleteLanguage(code: String) {
         val model = TranslateRemoteModel.Builder(code).build()
         modelManager.deleteDownloadedModel(model)
-            .addOnSuccessListener { refreshLanguages() }
+            .addOnSuccessListener {
+                // Keep the cached size entry. If the user re-downloads later, the
+                // measured delta will be smaller than the first install's (shared
+                // ML Kit scaffolding stays on disk), so reusing the original
+                // recorded size keeps the display stable across install/delete
+                // cycles. See `startNextDownloadIfIdle` for the matching write guard.
+                refreshLanguages()
+            }
     }
 
-    // ── PDF selection ────────────────────────────────────────────────────
+    // PDF selection
 
     /** Called by HomeFragment after the user picks a PDF via the SAF picker. */
     fun setPdfFile(uri: Uri, fileName: String) {
@@ -268,7 +343,7 @@ class TranslationViewModel(application: Application) : AndroidViewModel(applicat
         translationPercent = 0f
     }
 
-    // ── Translation pipeline ─────────────────────────────────────────────
+    // Translation pipeline
 
     /**
      * The end-to-end translation flow:
@@ -346,7 +421,7 @@ class TranslationViewModel(application: Application) : AndroidViewModel(applicat
         }
     }
 
-    // ── Direct text extraction (PdfBox) ──────────────────────────────────
+    // Direct text extraction (PdfBox)
 
     /**
      * Strategy 1: Use PdfBox to pull text directly out of the PDF's content streams.
@@ -407,7 +482,7 @@ class TranslationViewModel(application: Application) : AndroidViewModel(applicat
         return blocks
     }
 
-    // ── OCR text extraction (ML Kit) ─────────────────────────────────────
+    // OCR text extraction (ML Kit)
 
     /**
      * Pick the best-suited ML Kit text recognizer for the source language.
@@ -485,7 +560,7 @@ class TranslationViewModel(application: Application) : AndroidViewModel(applicat
         return blocks
     }
 
-    // ── Merge nearby blocks ────────────────────────────────────────────────
+    // Merge nearby blocks
 
     /**
      * Combine text blocks that appear to belong to the same paragraph.
@@ -579,7 +654,7 @@ class TranslationViewModel(application: Application) : AndroidViewModel(applicat
         )
     }
 
-    // ── Translation ──────────────────────────────────────────────────────
+    // Translation
 
     /**
      * Translate every block sequentially with ML Kit, pairing each original block
@@ -608,7 +683,7 @@ class TranslationViewModel(application: Application) : AndroidViewModel(applicat
         return results
     }
 
-    // ── PDF generation ───────────────────────────────────────────────────
+    // PDF generation
 
     /**
      * Produce a copy of the original PDF where each block's area has been
@@ -783,7 +858,7 @@ class TranslationViewModel(application: Application) : AndroidViewModel(applicat
                 code == "yi" || code == "ps" || code == "sd" || code == "ug"
     }
 
-    // ── PDF viewer ───────────────────────────────────────────────────────
+    // PDF viewer
 
     /**
      * Rasterize every page of `file` into a list of Bitmaps for the Compose viewer.
@@ -810,7 +885,7 @@ class TranslationViewModel(application: Application) : AndroidViewModel(applicat
         }
     }
 
-    // ── History ──────────────────────────────────────────────────────────
+    // History
 
     /** Reload `historyRecords` — either the full list or a search-filtered one. */
     fun loadHistory() {
@@ -843,7 +918,7 @@ class TranslationViewModel(application: Application) : AndroidViewModel(applicat
         }
     }
 
-    // ── Update check ─────────────────────────────────────────────────────
+    // Update check
 
     /**
      * Fire-and-forget HTTP GET against the app's `version.json` on GitHub to see
