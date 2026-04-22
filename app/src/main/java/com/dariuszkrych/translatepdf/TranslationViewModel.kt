@@ -22,6 +22,8 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.dariuszkrych.translatepdf.data.TranslationDatabase
 import com.dariuszkrych.translatepdf.data.TranslationRecord
+import com.google.android.gms.common.moduleinstall.ModuleInstall
+import com.google.android.gms.common.moduleinstall.ModuleInstallRequest
 import com.google.mlkit.common.model.DownloadConditions
 import com.google.mlkit.common.model.RemoteModelManager
 import com.google.mlkit.nl.translate.TranslateLanguage
@@ -509,6 +511,23 @@ class TranslationViewModel(application: Application) : AndroidViewModel(applicat
         val blocks = mutableListOf<TextBlock>()
         val recognizer = getOcrRecognizer()
 
+        // The script-specific text recognizer ships as an optional Play Services
+        // module — not present on a fresh install. Trigger the install proactively
+        // and await completion so the first `process()` call doesn't throw
+        // "Waiting for the text optional module to be downloaded" and force the
+        // user to hit Translate a second time.
+        try {
+            translationProgress = "Preparing text recognition..."
+            val request = ModuleInstallRequest.newBuilder()
+                .addApi(recognizer)
+                .build()
+            ModuleInstall.getClient(context).installModules(request).await()
+            translationProgress = "Extracting text..."
+        } catch (_: Exception) {
+            // Non-fatal: fall through. If the recognizer still isn't available
+            // the outer try/catch in `translate()` surfaces the error message.
+        }
+
         // Open the PDF as a file descriptor — PdfRenderer needs it.
         val fd = context.contentResolver.openFileDescriptor(uri, "r") ?: return blocks
         val renderer = PdfRenderer(fd)
@@ -914,6 +933,10 @@ class TranslationViewModel(application: Application) : AndroidViewModel(applicat
         // Only try to render if the file still exists on disk.
         if (file.exists()) {
             translatedPdfFile = file
+            // Drop the previously rendered bitmaps synchronously so the viewer
+            // shows its loading spinner instead of flashing the last record's
+            // pages while the newly selected file rasterizes on IO.
+            pdfPages = emptyList()
             renderPdf(file)
         }
     }

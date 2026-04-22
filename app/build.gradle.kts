@@ -24,11 +24,20 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            // R8 full-mode: strips unused code, obfuscates names, optimizes.
+            isMinifyEnabled = true
+            // Follow-up pass that removes resources R8 proves unreachable.
+            // Requires isMinifyEnabled = true.
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            // TEMPORARY: sign release builds with the debug keystore so we can
+            // install them over USB for R8 verification. Replace with a real
+            // release signingConfig (keystore + passwords from a gitignored
+            // properties file) before uploading an AAB to Google Play.
+            signingConfig = signingConfigs.getByName("debug")
         }
     }
     compileOptions {
