@@ -1,3 +1,81 @@
 <resources>
     <string name="app_name">TranslatePDF</string>
+
+    <!-- Bottom navigation / toolbar -->
+    <string name="nav_home">Home</string>
+    <string name="nav_languages">Languages</string>
+    <string name="nav_history">History</string>
+    <string name="action_settings">Settings</string>
+
+    <!-- Home screen -->
+    <string name="home_open_pdf">Open a PDF</string>
+    <string name="home_tap_select">Tap to select file to translate.</string>
+    <string name="home_tap_change">Tap to change file</string>
+    <string name="home_extraction_method">Select PDF text extraction method</string>
+    <string name="home_method_ocr">OCR</string>
+    <string name="home_method_direct">Direct</string>
+    <string name="home_select_languages_hint">Select languages in the Languages tab</string>
+    <string name="home_translate">Translate</string>
+    <string name="home_view_translated">View Translated PDF</string>
+    <string name="home_download_translated">Download Translated PDF</string>
+    <string name="home_progress_format">%1$d%% - %2$s</string>
+    <string name="home_lang_pair_format">%1$s → %2$s</string>
+
+    <!-- Translation progress messages (set by ViewModel) -->
+    <string name="progress_extracting">Extracting text…</string>
+    <string name="progress_translating">Translating…</string>
+    <string name="progress_generating">Generating PDF…</string>
+    <string name="progress_done">Done!</string>
+    <string name="progress_no_text">No text found in PDF.</string>
+    <string name="progress_preparing_ocr">Preparing text recognition…</string>
+    <string name="progress_error_format">Error: %1$s</string>
+
+    <!-- Languages screen -->
+    <string name="lang_select_title">Select Translation Languages</string>
+    <string name="lang_translates_to_cd">Translates to</string>
+    <string name="lang_unset_placeholder">\?\?\?</string>
+    <string name="lang_section_downloaded">Downloaded</string>
+    <string name="lang_section_available">Available</string>
+    <string name="lang_core_preinstalled">Core Pre-Installed</string>
+    <string name="lang_installed">Installed</string>
+    <string name="lang_installed_with_size_format">%1$s - Installed</string>
+    <string name="lang_size_mb_1f">%1$.1f MB</string>
+    <string name="lang_size_mb_2f">%1$.2f MB</string>
+    <string name="lang_downloading">Downloading…</string>
+    <string name="lang_delete_cd">Delete</string>
+    <string name="lang_download_cd">Download</string>
+    <string name="lang_picker_source_title">Source Language</string>
+    <string name="lang_picker_target_title">Target Language</string>
+    <string name="lang_picker_cancel">Cancel</string>
+    <string name="lang_picker_empty">Download language packs first.</string>
+    <string name="lang_picker_item_format">%1$s (%2$s)</string>
+
+    <!-- History screen -->
+    <string name="history_search_label">Type to search history</string>
+    <string name="history_recent">Recent Translations</string>
+    <string name="history_empty">No translations yet.</string>
+    <string name="history_no_results">No results found.</string>
+    <string name="history_supporting_format">%1$s → %2$s\n%3$s</string>
+
+    <!-- Settings screen -->
+    <string name="settings_select_theme">Select Theme</string>
+    <string name="theme_system">System</string>
+    <string name="theme_dark">Dark</string>
+    <string name="theme_light">Light</string>
+    <string name="settings_send_review">Send a Review</string>
+    <string name="settings_review_subtitle">Click here to review</string>
+    <string name="settings_thank_you">Thank you for using TranslatePDF. ^^</string>
+    <string name="update_available_title">Update available</string>
+    <string name="update_available_subtitle_with_version">Version %1$s is now available on Google Play</string>
+    <string name="update_available_subtitle">A new version is now available on Google Play</string>
+    <string name="update_action">Update</string>
+
+    <!-- PDF viewer -->
+    <string name="pdf_back">Back</string>
+    <string name="pdf_share_cd">Share</string>
+    <string name="pdf_share_chooser">Share Translated PDF</string>
+    <string name="pdf_page_cd_format">Page %1$d</string>
+
+    <!-- Misc -->
+    <string name="toast_saved_to_downloads">Saved to Downloads</string>
 </resources>

@@ -1,0 +1,63 @@
+<resources>
+    <string name="nav_home">首页</string>
+    <string name="nav_languages">语言</string>
+    <string name="nav_history">历史</string>
+    <string name="action_settings">设置</string>
+
+    <string name="home_open_pdf">打开 PDF</string>
+    <string name="home_tap_select">点按以选择要翻译的文件。</string>
+    <string name="home_tap_change">点按以更换文件</string>
+    <string name="home_extraction_method">选择 PDF 文本提取方式</string>
+    <string name="home_method_direct">直接</string>
+    <string name="home_select_languages_hint">请在“语言”选项卡中选择语言</string>
+    <string name="home_translate">翻译</string>
+    <string name="home_view_translated">查看翻译后的 PDF</string>
+    <string name="home_download_translated">下载翻译后的 PDF</string>
+
+    <string name="progress_extracting">正在提取文本…</string>
+    <string name="progress_translating">正在翻译…</string>
+    <string name="progress_generating">正在生成 PDF…</string>
+    <string name="progress_done">完成！</string>
+    <string name="progress_no_text">PDF 中未找到文本。</string>
+    <string name="progress_preparing_ocr">正在准备文本识别…</string>
+    <string name="progress_error_format">错误：%1$s</string>
+
+    <string name="lang_select_title">选择翻译语言</string>
+    <string name="lang_translates_to_cd">翻译为</string>
+    <string name="lang_section_downloaded">已下载</string>
+    <string name="lang_section_available">可用</string>
+    <string name="lang_core_preinstalled">核心已预装</string>
+    <string name="lang_installed">已安装</string>
+    <string name="lang_installed_with_size_format">%1$s - 已安装</string>
+    <string name="lang_downloading">下载中…</string>
+    <string name="lang_delete_cd">删除</string>
+    <string name="lang_download_cd">下载</string>
+    <string name="lang_picker_source_title">源语言</string>
+    <string name="lang_picker_target_title">目标语言</string>
+    <string name="lang_picker_cancel">取消</string>
+    <string name="lang_picker_empty">请先下载语言包。</string>
+
+    <string name="history_search_label">输入以搜索历史记录</string>
+    <string name="history_recent">最近翻译</string>
+    <string name="history_empty">暂无翻译记录。</string>
+    <string name="history_no_results">未找到结果。</string>
+
+    <string name="settings_select_theme">选择主题</string>
+    <string name="theme_system">系统</string>
+    <string name="theme_dark">深色</string>
+    <string name="theme_light">浅色</string>
+    <string name="settings_send_review">发送评价</string>
+    <string name="settings_review_subtitle">点按以评价</string>
+    <string name="settings_thank_you">感谢使用 TranslatePDF。^^</string>
+    <string name="update_available_title">有可用更新</string>
+    <string name="update_available_subtitle_with_version">版本 %1$s 现已在 Google Play 上线</string>
+    <string name="update_available_subtitle">Google Play 上有新版本可用</string>
+    <string name="update_action">更新</string>
+
+    <string name="pdf_back">返回</string>
+    <string name="pdf_share_cd">分享</string>
+    <string name="pdf_share_chooser">分享翻译后的 PDF</string>
+    <string name="pdf_page_cd_format">第 %1$d 页</string>
+
+    <string name="toast_saved_to_downloads">已保存到“下载”</string>
+</resources>

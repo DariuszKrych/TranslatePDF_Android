@@ -1,0 +1,63 @@
+<resources>
+    <string name="nav_home">Start</string>
+    <string name="nav_languages">Języki</string>
+    <string name="nav_history">Historia</string>
+    <string name="action_settings">Ustawienia</string>
+
+    <string name="home_open_pdf">Otwórz plik PDF</string>
+    <string name="home_tap_select">Dotknij, aby wybrać plik do przetłumaczenia.</string>
+    <string name="home_tap_change">Dotknij, aby zmienić plik</string>
+    <string name="home_extraction_method">Wybierz metodę wyodrębniania tekstu</string>
+    <string name="home_method_direct">Bezpośrednia</string>
+    <string name="home_select_languages_hint">Wybierz języki w karcie Języki</string>
+    <string name="home_translate">Przetłumacz</string>
+    <string name="home_view_translated">Pokaż przetłumaczony PDF</string>
+    <string name="home_download_translated">Pobierz przetłumaczony PDF</string>
+
+    <string name="progress_extracting">Wyodrębnianie tekstu…</string>
+    <string name="progress_translating">Tłumaczenie…</string>
+    <string name="progress_generating">Generowanie PDF…</string>
+    <string name="progress_done">Gotowe!</string>
+    <string name="progress_no_text">Nie znaleziono tekstu w PDF.</string>
+    <string name="progress_preparing_ocr">Przygotowywanie rozpoznawania tekstu…</string>
+    <string name="progress_error_format">Błąd: %1$s</string>
+
+    <string name="lang_select_title">Wybierz języki tłumaczenia</string>
+    <string name="lang_translates_to_cd">Tłumaczy na</string>
+    <string name="lang_section_downloaded">Pobrane</string>
+    <string name="lang_section_available">Dostępne</string>
+    <string name="lang_core_preinstalled">Wbudowany</string>
+    <string name="lang_installed">Zainstalowany</string>
+    <string name="lang_installed_with_size_format">%1$s - Zainstalowany</string>
+    <string name="lang_downloading">Pobieranie…</string>
+    <string name="lang_delete_cd">Usuń</string>
+    <string name="lang_download_cd">Pobierz</string>
+    <string name="lang_picker_source_title">Język źródłowy</string>
+    <string name="lang_picker_target_title">Język docelowy</string>
+    <string name="lang_picker_cancel">Anuluj</string>
+    <string name="lang_picker_empty">Najpierw pobierz pakiet językowy.</string>
+
+    <string name="history_search_label">Wpisz, aby przeszukać historię</string>
+    <string name="history_recent">Ostatnie tłumaczenia</string>
+    <string name="history_empty">Brak tłumaczeń.</string>
+    <string name="history_no_results">Brak wyników.</string>
+
+    <string name="settings_select_theme">Wybierz motyw</string>
+    <string name="theme_system">Systemowy</string>
+    <string name="theme_dark">Ciemny</string>
+    <string name="theme_light">Jasny</string>
+    <string name="settings_send_review">Wyślij opinię</string>
+    <string name="settings_review_subtitle">Dotknij, aby ocenić</string>
+    <string name="settings_thank_you">Dziękujemy za korzystanie z TranslatePDF. ^^</string>
+    <string name="update_available_title">Dostępna aktualizacja</string>
+    <string name="update_available_subtitle_with_version">Wersja %1$s jest już dostępna w Google Play</string>
+    <string name="update_available_subtitle">Nowa wersja jest dostępna w Google Play</string>
+    <string name="update_action">Zaktualizuj</string>
+
+    <string name="pdf_back">Wstecz</string>
+    <string name="pdf_share_cd">Udostępnij</string>
+    <string name="pdf_share_chooser">Udostępnij przetłumaczony PDF</string>
+    <string name="pdf_page_cd_format">Strona %1$d</string>
+
+    <string name="toast_saved_to_downloads">Zapisano w folderze Pobrane</string>
+</resources>

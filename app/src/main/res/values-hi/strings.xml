@@ -1,0 +1,63 @@
+<resources>
+    <string name="nav_home">होम</string>
+    <string name="nav_languages">भाषाएँ</string>
+    <string name="nav_history">इतिहास</string>
+    <string name="action_settings">सेटिंग्स</string>
+
+    <string name="home_open_pdf">PDF खोलें</string>
+    <string name="home_tap_select">अनुवाद के लिए फ़ाइल चुनने हेतु टैप करें.</string>
+    <string name="home_tap_change">फ़ाइल बदलने के लिए टैप करें</string>
+    <string name="home_extraction_method">PDF टेक्स्ट निकालने की विधि चुनें</string>
+    <string name="home_method_direct">सीधा</string>
+    <string name="home_select_languages_hint">भाषाएँ टैब से भाषाएँ चुनें</string>
+    <string name="home_translate">अनुवाद करें</string>
+    <string name="home_view_translated">अनुवादित PDF देखें</string>
+    <string name="home_download_translated">अनुवादित PDF डाउनलोड करें</string>
+
+    <string name="progress_extracting">टेक्स्ट निकाल रहा है…</string>
+    <string name="progress_translating">अनुवाद हो रहा है…</string>
+    <string name="progress_generating">PDF बना रहा है…</string>
+    <string name="progress_done">हो गया!</string>
+    <string name="progress_no_text">PDF में कोई टेक्स्ट नहीं मिला.</string>
+    <string name="progress_preparing_ocr">टेक्स्ट पहचान तैयार हो रही है…</string>
+    <string name="progress_error_format">त्रुटि: %1$s</string>
+
+    <string name="lang_select_title">अनुवाद की भाषाएँ चुनें</string>
+    <string name="lang_translates_to_cd">इस भाषा में अनुवाद</string>
+    <string name="lang_section_downloaded">डाउनलोड किए गए</string>
+    <string name="lang_section_available">उपलब्ध</string>
+    <string name="lang_core_preinstalled">कोर पहले से इंस्टॉल</string>
+    <string name="lang_installed">इंस्टॉल किया गया</string>
+    <string name="lang_installed_with_size_format">%1$s - इंस्टॉल किया गया</string>
+    <string name="lang_downloading">डाउनलोड हो रहा है…</string>
+    <string name="lang_delete_cd">हटाएँ</string>
+    <string name="lang_download_cd">डाउनलोड</string>
+    <string name="lang_picker_source_title">स्रोत भाषा</string>
+    <string name="lang_picker_target_title">लक्ष्य भाषा</string>
+    <string name="lang_picker_cancel">रद्द करें</string>
+    <string name="lang_picker_empty">पहले एक भाषा पैक डाउनलोड करें.</string>
+
+    <string name="history_search_label">इतिहास खोजने के लिए लिखें</string>
+    <string name="history_recent">हाल के अनुवाद</string>
+    <string name="history_empty">अभी तक कोई अनुवाद नहीं.</string>
+    <string name="history_no_results">कोई परिणाम नहीं मिला.</string>
+
+    <string name="settings_select_theme">थीम चुनें</string>
+    <string name="theme_system">सिस्टम</string>
+    <string name="theme_dark">डार्क</string>
+    <string name="theme_light">लाइट</string>
+    <string name="settings_send_review">समीक्षा भेजें</string>
+    <string name="settings_review_subtitle">समीक्षा के लिए टैप करें</string>
+    <string name="settings_thank_you">TranslatePDF का उपयोग करने के लिए धन्यवाद. ^^</string>
+    <string name="update_available_title">अपडेट उपलब्ध</string>
+    <string name="update_available_subtitle_with_version">संस्करण %1$s अब Google Play पर उपलब्ध है</string>
+    <string name="update_available_subtitle">Google Play पर नया संस्करण उपलब्ध है</string>
+    <string name="update_action">अपडेट करें</string>
+
+    <string name="pdf_back">वापस</string>
+    <string name="pdf_share_cd">साझा करें</string>
+    <string name="pdf_share_chooser">अनुवादित PDF साझा करें</string>
+    <string name="pdf_page_cd_format">पृष्ठ %1$d</string>
+
+    <string name="toast_saved_to_downloads">डाउनलोड में सहेजा गया</string>
+</resources>

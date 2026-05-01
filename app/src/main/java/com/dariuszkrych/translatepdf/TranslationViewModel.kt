@@ -362,8 +362,9 @@ class TranslationViewModel(application: Application) : AndroidViewModel(applicat
         if (sourceLang == targetLang) return
 
         // Flip the UI into "translating" state.
+        val app = getApplication<Application>()
         isTranslating = true
-        translationProgress = "Extracting text..."
+        translationProgress = app.getString(R.string.progress_extracting)
         translationPercent = 0f
         viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -378,7 +379,7 @@ class TranslationViewModel(application: Application) : AndroidViewModel(applicat
 
                 // If the PDF is empty/scanned with nothing detected, surface a friendly error.
                 if (blocks.isEmpty()) {
-                    translationProgress = "No text found in PDF."
+                    translationProgress = app.getString(R.string.progress_no_text)
                     translationPercent = 0f
                     isTranslating = false
                     return@launch
@@ -388,11 +389,11 @@ class TranslationViewModel(application: Application) : AndroidViewModel(applicat
                 val mergedBlocks = mergeNearbyBlocks(blocks)
 
                 // Step 3 — translate each merged block via ML Kit.
-                translationProgress = "Translating..."
+                translationProgress = app.getString(R.string.progress_translating)
                 val translatedBlocks = translateBlocks(mergedBlocks)
 
                 // Step 4 — stamp translations back onto a copy of the original PDF.
-                translationProgress = "Generating PDF..."
+                translationProgress = app.getString(R.string.progress_generating)
                 translationPercent = 80f
                 val outputFile = generateTranslatedPdf(uri, translatedBlocks)
                 translationPercent = 95f
@@ -412,11 +413,11 @@ class TranslationViewModel(application: Application) : AndroidViewModel(applicat
                 )
 
                 translationPercent = 100f
-                translationProgress = "Done!"
+                translationProgress = app.getString(R.string.progress_done)
                 isTranslating = false
             } catch (e: Exception) {
                 // Any failure in the pipeline becomes a user-visible error message.
-                translationProgress = "Error: ${e.message}"
+                translationProgress = app.getString(R.string.progress_error_format, e.message ?: "")
                 translationPercent = 0f
                 isTranslating = false
             }
@@ -517,12 +518,12 @@ class TranslationViewModel(application: Application) : AndroidViewModel(applicat
         // "Waiting for the text optional module to be downloaded" and force the
         // user to hit Translate a second time.
         try {
-            translationProgress = "Preparing text recognition..."
+            translationProgress = context.getString(R.string.progress_preparing_ocr)
             val request = ModuleInstallRequest.newBuilder()
                 .addApi(recognizer)
                 .build()
             ModuleInstall.getClient(context).installModules(request).await()
-            translationProgress = "Extracting text..."
+            translationProgress = context.getString(R.string.progress_extracting)
         } catch (_: Exception) {
             // Non-fatal: fall through. If the recognizer still isn't available
             // the outer try/catch in `translate()` surfaces the error message.

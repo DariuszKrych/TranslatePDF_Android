@@ -1,0 +1,63 @@
+<resources>
+    <string name="nav_home">Dar</string>
+    <string name="nav_languages">Lingwi</string>
+    <string name="nav_history">Storja</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="home_open_pdf">Iftaħ PDF</string>
+    <string name="home_tap_select">Agħfas biex tagħżel il-fajl x\'tittraduċi.</string>
+    <string name="home_tap_change">Agħfas biex tibdel il-fajl</string>
+    <string name="home_extraction_method">Agħżel il-metodu għall-estrazzjoni tat-test mill-PDF</string>
+    <string name="home_method_direct">Dirett</string>
+    <string name="home_select_languages_hint">Agħżel il-lingwi mit-tab Lingwi</string>
+    <string name="home_translate">Ittraduċi</string>
+    <string name="home_view_translated">Ara l-PDF tradott</string>
+    <string name="home_download_translated">Niżżel il-PDF tradott</string>
+
+    <string name="progress_extracting">Qed jiġi estratt it-test…</string>
+    <string name="progress_translating">Qed jiġi tradott…</string>
+    <string name="progress_generating">Qed jinħoloq il-PDF…</string>
+    <string name="progress_done">Lest!</string>
+    <string name="progress_no_text">Ma nstab l-ebda test fil-PDF.</string>
+    <string name="progress_preparing_ocr">Qed titħejja l-għarfien tat-test…</string>
+    <string name="progress_error_format">Żball: %1$s</string>
+
+    <string name="lang_select_title">Agħżel il-lingwi tat-traduzzjoni</string>
+    <string name="lang_translates_to_cd">Jittraduċi għal</string>
+    <string name="lang_section_downloaded">Imniżżla</string>
+    <string name="lang_section_available">Disponibbli</string>
+    <string name="lang_core_preinstalled">Bażiku, installat minn qabel</string>
+    <string name="lang_installed">Installata</string>
+    <string name="lang_installed_with_size_format">%1$s - Installata</string>
+    <string name="lang_downloading">Qed jitniżżel…</string>
+    <string name="lang_delete_cd">Ħassar</string>
+    <string name="lang_download_cd">Niżżel</string>
+    <string name="lang_picker_source_title">Lingwa tas-sors</string>
+    <string name="lang_picker_target_title">Lingwa fil-mira</string>
+    <string name="lang_picker_cancel">Ikkanċella</string>
+    <string name="lang_picker_empty">L-ewwel niżżel pakkett ta\' lingwa.</string>
+
+    <string name="history_search_label">Ittajpja biex tfittex fl-istorja</string>
+    <string name="history_recent">Traduzzjonijiet riċenti</string>
+    <string name="history_empty">Għad m\'hemm l-ebda traduzzjoni.</string>
+    <string name="history_no_results">Ma nstab l-ebda riżultat.</string>
+
+    <string name="settings_select_theme">Agħżel it-tema</string>
+    <string name="theme_system">Tas-sistema</string>
+    <string name="theme_dark">Skura</string>
+    <string name="theme_light">Ċara</string>
+    <string name="settings_send_review">Ibgħat reċensjoni</string>
+    <string name="settings_review_subtitle">Agħfas hawn biex tirrevedi</string>
+    <string name="settings_thank_you">Grazzi talli qed tuża TranslatePDF. ^^</string>
+    <string name="update_available_title">Aġġornament disponibbli</string>
+    <string name="update_available_subtitle_with_version">Il-verżjoni %1$s issa hi disponibbli fuq Google Play</string>
+    <string name="update_available_subtitle">Verżjoni ġdida hi disponibbli fuq Google Play</string>
+    <string name="update_action">Aġġorna</string>
+
+    <string name="pdf_back">Lura</string>
+    <string name="pdf_share_cd">Aqsam</string>
+    <string name="pdf_share_chooser">Aqsam il-PDF tradott</string>
+    <string name="pdf_page_cd_format">Paġna %1$d</string>
+
+    <string name="toast_saved_to_downloads">Inżamm fid-Downloads</string>
+</resources>

@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="?attr/colorPrimary"
-        app:title="TranslatePDF"
+        app:title="@string/app_name"
         app:titleTextColor="?attr/colorOnPrimary"
         app:menu="@menu/top_app_bar" />
 

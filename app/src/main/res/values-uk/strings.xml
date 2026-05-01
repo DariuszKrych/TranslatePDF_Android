@@ -1,0 +1,63 @@
+<resources>
+    <string name="nav_home">Головна</string>
+    <string name="nav_languages">Мови</string>
+    <string name="nav_history">Історія</string>
+    <string name="action_settings">Налаштування</string>
+
+    <string name="home_open_pdf">Відкрити PDF</string>
+    <string name="home_tap_select">Торкніться, щоб вибрати файл для перекладу.</string>
+    <string name="home_tap_change">Торкніться, щоб змінити файл</string>
+    <string name="home_extraction_method">Виберіть метод вилучення тексту з PDF</string>
+    <string name="home_method_direct">Прямий</string>
+    <string name="home_select_languages_hint">Виберіть мови у вкладці «Мови»</string>
+    <string name="home_translate">Перекласти</string>
+    <string name="home_view_translated">Переглянути перекладений PDF</string>
+    <string name="home_download_translated">Завантажити перекладений PDF</string>
+
+    <string name="progress_extracting">Вилучення тексту…</string>
+    <string name="progress_translating">Переклад…</string>
+    <string name="progress_generating">Створення PDF…</string>
+    <string name="progress_done">Готово!</string>
+    <string name="progress_no_text">У PDF не знайдено тексту.</string>
+    <string name="progress_preparing_ocr">Підготовка розпізнавання тексту…</string>
+    <string name="progress_error_format">Помилка: %1$s</string>
+
+    <string name="lang_select_title">Вибір мов перекладу</string>
+    <string name="lang_translates_to_cd">Перекладає на</string>
+    <string name="lang_section_downloaded">Завантажено</string>
+    <string name="lang_section_available">Доступно</string>
+    <string name="lang_core_preinstalled">Базовий, попередньо встановлено</string>
+    <string name="lang_installed">Встановлено</string>
+    <string name="lang_installed_with_size_format">%1$s - Встановлено</string>
+    <string name="lang_downloading">Завантаження…</string>
+    <string name="lang_delete_cd">Видалити</string>
+    <string name="lang_download_cd">Завантажити</string>
+    <string name="lang_picker_source_title">Мова оригіналу</string>
+    <string name="lang_picker_target_title">Мова перекладу</string>
+    <string name="lang_picker_cancel">Скасувати</string>
+    <string name="lang_picker_empty">Спершу завантажте мовний пакет.</string>
+
+    <string name="history_search_label">Введіть запит, щоб шукати</string>
+    <string name="history_recent">Нещодавні переклади</string>
+    <string name="history_empty">Перекладів ще немає.</string>
+    <string name="history_no_results">Нічого не знайдено.</string>
+
+    <string name="settings_select_theme">Виберіть тему</string>
+    <string name="theme_system">Системна</string>
+    <string name="theme_dark">Темна</string>
+    <string name="theme_light">Світла</string>
+    <string name="settings_send_review">Залишити відгук</string>
+    <string name="settings_review_subtitle">Торкніться, щоб оцінити</string>
+    <string name="settings_thank_you">Дякуємо, що користуєтесь TranslatePDF. ^^</string>
+    <string name="update_available_title">Доступне оновлення</string>
+    <string name="update_available_subtitle_with_version">Версія %1$s уже доступна в Google Play</string>
+    <string name="update_available_subtitle">У Google Play доступна нова версія</string>
+    <string name="update_action">Оновити</string>
+
+    <string name="pdf_back">Назад</string>
+    <string name="pdf_share_cd">Поділитися</string>
+    <string name="pdf_share_chooser">Поділитися перекладеним PDF</string>
+    <string name="pdf_page_cd_format">Сторінка %1$d</string>
+
+    <string name="toast_saved_to_downloads">Збережено в «Завантаження»</string>
+</resources>

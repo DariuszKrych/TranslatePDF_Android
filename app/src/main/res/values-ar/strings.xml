@@ -1,0 +1,63 @@
+<resources>
+    <string name="nav_home">الرئيسية</string>
+    <string name="nav_languages">اللغات</string>
+    <string name="nav_history">السجل</string>
+    <string name="action_settings">الإعدادات</string>
+
+    <string name="home_open_pdf">فتح ملف PDF</string>
+    <string name="home_tap_select">اضغط لاختيار الملف الذي تريد ترجمته.</string>
+    <string name="home_tap_change">اضغط لتغيير الملف</string>
+    <string name="home_extraction_method">اختر طريقة استخراج النص من PDF</string>
+    <string name="home_method_direct">مباشر</string>
+    <string name="home_select_languages_hint">اختر اللغات من تبويب اللغات</string>
+    <string name="home_translate">ترجمة</string>
+    <string name="home_view_translated">عرض ملف PDF المترجم</string>
+    <string name="home_download_translated">تنزيل ملف PDF المترجم</string>
+
+    <string name="progress_extracting">جارٍ استخراج النص…</string>
+    <string name="progress_translating">جارٍ الترجمة…</string>
+    <string name="progress_generating">جارٍ إنشاء PDF…</string>
+    <string name="progress_done">تم!</string>
+    <string name="progress_no_text">لم يتم العثور على نص في PDF.</string>
+    <string name="progress_preparing_ocr">تحضير التعرف على النص…</string>
+    <string name="progress_error_format">خطأ: %1$s</string>
+
+    <string name="lang_select_title">اختر لغات الترجمة</string>
+    <string name="lang_translates_to_cd">يترجم إلى</string>
+    <string name="lang_section_downloaded">المنزّلة</string>
+    <string name="lang_section_available">المتاحة</string>
+    <string name="lang_core_preinstalled">أساسي مثبّت مسبقًا</string>
+    <string name="lang_installed">مثبّت</string>
+    <string name="lang_installed_with_size_format">%1$s - مثبّت</string>
+    <string name="lang_downloading">جارٍ التنزيل…</string>
+    <string name="lang_delete_cd">حذف</string>
+    <string name="lang_download_cd">تنزيل</string>
+    <string name="lang_picker_source_title">لغة المصدر</string>
+    <string name="lang_picker_target_title">لغة الهدف</string>
+    <string name="lang_picker_cancel">إلغاء</string>
+    <string name="lang_picker_empty">نزّل حزمة لغة أولًا.</string>
+
+    <string name="history_search_label">اكتب للبحث في السجل</string>
+    <string name="history_recent">الترجمات الأخيرة</string>
+    <string name="history_empty">لا توجد ترجمات بعد.</string>
+    <string name="history_no_results">لا توجد نتائج.</string>
+
+    <string name="settings_select_theme">اختر السمة</string>
+    <string name="theme_system">النظام</string>
+    <string name="theme_dark">داكن</string>
+    <string name="theme_light">فاتح</string>
+    <string name="settings_send_review">إرسال تقييم</string>
+    <string name="settings_review_subtitle">اضغط هنا للتقييم</string>
+    <string name="settings_thank_you">شكرًا لاستخدامك TranslatePDF. ^^</string>
+    <string name="update_available_title">يتوفر تحديث</string>
+    <string name="update_available_subtitle_with_version">الإصدار %1$s متاح الآن على Google Play</string>
+    <string name="update_available_subtitle">يتوفر إصدار جديد على Google Play</string>
+    <string name="update_action">تحديث</string>
+
+    <string name="pdf_back">رجوع</string>
+    <string name="pdf_share_cd">مشاركة</string>
+    <string name="pdf_share_chooser">مشاركة ملف PDF المترجم</string>
+    <string name="pdf_page_cd_format">صفحة %1$d</string>
+
+    <string name="toast_saved_to_downloads">تم الحفظ في التنزيلات</string>
+</resources>

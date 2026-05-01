@@ -1,0 +1,63 @@
+<resources>
+    <string name="nav_home">홈</string>
+    <string name="nav_languages">언어</string>
+    <string name="nav_history">기록</string>
+    <string name="action_settings">설정</string>
+
+    <string name="home_open_pdf">PDF 열기</string>
+    <string name="home_tap_select">번역할 파일을 선택하려면 누르세요.</string>
+    <string name="home_tap_change">파일을 변경하려면 누르세요</string>
+    <string name="home_extraction_method">PDF 텍스트 추출 방식 선택</string>
+    <string name="home_method_direct">직접</string>
+    <string name="home_select_languages_hint">언어 탭에서 언어를 선택하세요</string>
+    <string name="home_translate">번역</string>
+    <string name="home_view_translated">번역된 PDF 보기</string>
+    <string name="home_download_translated">번역된 PDF 다운로드</string>
+
+    <string name="progress_extracting">텍스트 추출 중…</string>
+    <string name="progress_translating">번역 중…</string>
+    <string name="progress_generating">PDF 생성 중…</string>
+    <string name="progress_done">완료!</string>
+    <string name="progress_no_text">PDF에서 텍스트를 찾지 못했습니다.</string>
+    <string name="progress_preparing_ocr">텍스트 인식 준비 중…</string>
+    <string name="progress_error_format">오류: %1$s</string>
+
+    <string name="lang_select_title">번역 언어 선택</string>
+    <string name="lang_translates_to_cd">번역 대상</string>
+    <string name="lang_section_downloaded">다운로드됨</string>
+    <string name="lang_section_available">사용 가능</string>
+    <string name="lang_core_preinstalled">코어 사전 설치됨</string>
+    <string name="lang_installed">설치됨</string>
+    <string name="lang_installed_with_size_format">%1$s - 설치됨</string>
+    <string name="lang_downloading">다운로드 중…</string>
+    <string name="lang_delete_cd">삭제</string>
+    <string name="lang_download_cd">다운로드</string>
+    <string name="lang_picker_source_title">원본 언어</string>
+    <string name="lang_picker_target_title">대상 언어</string>
+    <string name="lang_picker_cancel">취소</string>
+    <string name="lang_picker_empty">먼저 언어 팩을 다운로드하세요.</string>
+
+    <string name="history_search_label">기록 검색</string>
+    <string name="history_recent">최근 번역</string>
+    <string name="history_empty">아직 번역이 없습니다.</string>
+    <string name="history_no_results">결과를 찾을 수 없습니다.</string>
+
+    <string name="settings_select_theme">테마 선택</string>
+    <string name="theme_system">시스템</string>
+    <string name="theme_dark">다크</string>
+    <string name="theme_light">라이트</string>
+    <string name="settings_send_review">리뷰 보내기</string>
+    <string name="settings_review_subtitle">여기를 눌러 리뷰</string>
+    <string name="settings_thank_you">TranslatePDF를 이용해 주셔서 감사합니다. ^^</string>
+    <string name="update_available_title">업데이트 사용 가능</string>
+    <string name="update_available_subtitle_with_version">버전 %1$s이(가) Google Play에 출시되었습니다</string>
+    <string name="update_available_subtitle">Google Play에 새 버전이 있습니다</string>
+    <string name="update_action">업데이트</string>
+
+    <string name="pdf_back">뒤로</string>
+    <string name="pdf_share_cd">공유</string>
+    <string name="pdf_share_chooser">번역된 PDF 공유</string>
+    <string name="pdf_page_cd_format">%1$d 페이지</string>
+
+    <string name="toast_saved_to_downloads">다운로드에 저장됨</string>
+</resources>

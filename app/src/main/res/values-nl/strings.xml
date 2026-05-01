@@ -1,0 +1,63 @@
+<resources>
+    <string name="nav_home">Home</string>
+    <string name="nav_languages">Talen</string>
+    <string name="nav_history">Geschiedenis</string>
+    <string name="action_settings">Instellingen</string>
+
+    <string name="home_open_pdf">Open een PDF</string>
+    <string name="home_tap_select">Tik om het te vertalen bestand te kiezen.</string>
+    <string name="home_tap_change">Tik om het bestand te wijzigen</string>
+    <string name="home_extraction_method">Kies de PDF-tekstextractiemethode</string>
+    <string name="home_method_direct">Direct</string>
+    <string name="home_select_languages_hint">Kies de talen op het tabblad Talen</string>
+    <string name="home_translate">Vertalen</string>
+    <string name="home_view_translated">Vertaalde PDF bekijken</string>
+    <string name="home_download_translated">Vertaalde PDF downloaden</string>
+
+    <string name="progress_extracting">Tekst wordt opgehaald…</string>
+    <string name="progress_translating">Vertalen…</string>
+    <string name="progress_generating">PDF genereren…</string>
+    <string name="progress_done">Klaar!</string>
+    <string name="progress_no_text">Geen tekst gevonden in PDF.</string>
+    <string name="progress_preparing_ocr">Tekstherkenning voorbereiden…</string>
+    <string name="progress_error_format">Fout: %1$s</string>
+
+    <string name="lang_select_title">Vertaaltalen kiezen</string>
+    <string name="lang_translates_to_cd">Vertaalt naar</string>
+    <string name="lang_section_downloaded">Gedownload</string>
+    <string name="lang_section_available">Beschikbaar</string>
+    <string name="lang_core_preinstalled">Kern voorgeïnstalleerd</string>
+    <string name="lang_installed">Geïnstalleerd</string>
+    <string name="lang_installed_with_size_format">%1$s - Geïnstalleerd</string>
+    <string name="lang_downloading">Downloaden…</string>
+    <string name="lang_delete_cd">Verwijderen</string>
+    <string name="lang_download_cd">Downloaden</string>
+    <string name="lang_picker_source_title">Brontaal</string>
+    <string name="lang_picker_target_title">Doeltaal</string>
+    <string name="lang_picker_cancel">Annuleren</string>
+    <string name="lang_picker_empty">Download eerst een taalpakket.</string>
+
+    <string name="history_search_label">Typ om te zoeken</string>
+    <string name="history_recent">Recente vertalingen</string>
+    <string name="history_empty">Nog geen vertalingen.</string>
+    <string name="history_no_results">Geen resultaten.</string>
+
+    <string name="settings_select_theme">Kies thema</string>
+    <string name="theme_system">Systeem</string>
+    <string name="theme_dark">Donker</string>
+    <string name="theme_light">Licht</string>
+    <string name="settings_send_review">Stuur een beoordeling</string>
+    <string name="settings_review_subtitle">Tik om te beoordelen</string>
+    <string name="settings_thank_you">Bedankt voor het gebruik van TranslatePDF. ^^</string>
+    <string name="update_available_title">Update beschikbaar</string>
+    <string name="update_available_subtitle_with_version">Versie %1$s is nu beschikbaar in Google Play</string>
+    <string name="update_available_subtitle">Een nieuwe versie is beschikbaar in Google Play</string>
+    <string name="update_action">Bijwerken</string>
+
+    <string name="pdf_back">Terug</string>
+    <string name="pdf_share_cd">Delen</string>
+    <string name="pdf_share_chooser">Vertaalde PDF delen</string>
+    <string name="pdf_page_cd_format">Pagina %1$d</string>
+
+    <string name="toast_saved_to_downloads">Opgeslagen in Downloads</string>
+</resources>

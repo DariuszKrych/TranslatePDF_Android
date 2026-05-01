@@ -15,6 +15,7 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.dariuszkrych.translatepdf.MainActivity
+import com.dariuszkrych.translatepdf.R
 import com.dariuszkrych.translatepdf.TranslationViewModel
 import com.dariuszkrych.translatepdf.ui.screens.HomeScreen
 import com.dariuszkrych.translatepdf.ui.theme.TranslatePDFTheme
@@ -104,7 +105,7 @@ class HomeFragment : Fragment() {
                 ctx.contentResolver.openOutputStream(uri)?.use { out ->
                     file.inputStream().use { it.copyTo(out) }
                 }
-                Toast.makeText(ctx, "Saved to Downloads", Toast.LENGTH_SHORT).show()
+                Toast.makeText(ctx, getString(R.string.toast_saved_to_downloads), Toast.LENGTH_SHORT).show()
             }
         } else {
             // Legacy path (pre-Q): write directly to the public Downloads directory.
@@ -112,7 +113,7 @@ class HomeFragment : Fragment() {
             val downloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
             val dest = File(downloadsDir, outputName)
             file.copyTo(dest, overwrite = true)
-            Toast.makeText(ctx, "Saved to Downloads", Toast.LENGTH_SHORT).show()
+            Toast.makeText(ctx, getString(R.string.toast_saved_to_downloads), Toast.LENGTH_SHORT).show()
         }
     }
 

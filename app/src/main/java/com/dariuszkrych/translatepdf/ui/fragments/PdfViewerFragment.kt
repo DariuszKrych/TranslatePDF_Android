@@ -10,6 +10,7 @@ import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.dariuszkrych.translatepdf.MainActivity
+import com.dariuszkrych.translatepdf.R
 import com.dariuszkrych.translatepdf.TranslationViewModel
 import com.dariuszkrych.translatepdf.ui.screens.PdfViewerScreen
 import com.dariuszkrych.translatepdf.ui.theme.TranslatePDFTheme
@@ -67,6 +68,6 @@ class PdfViewerFragment : Fragment() {
             addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION) // Temp grant for the chosen app.
         }
         // `createChooser` forces the system picker even if a default handler is set.
-        startActivity(Intent.createChooser(intent, "Share Translated PDF"))
+        startActivity(Intent.createChooser(intent, getString(R.string.pdf_share_chooser)))
     }
 }

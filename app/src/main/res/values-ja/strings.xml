@@ -1,0 +1,63 @@
+<resources>
+    <string name="nav_home">ホーム</string>
+    <string name="nav_languages">言語</string>
+    <string name="nav_history">履歴</string>
+    <string name="action_settings">設定</string>
+
+    <string name="home_open_pdf">PDF を開く</string>
+    <string name="home_tap_select">タップして翻訳するファイルを選択。</string>
+    <string name="home_tap_change">タップしてファイルを変更</string>
+    <string name="home_extraction_method">PDF テキスト抽出方法を選択</string>
+    <string name="home_method_direct">直接</string>
+    <string name="home_select_languages_hint">「言語」タブで言語を選択してください</string>
+    <string name="home_translate">翻訳</string>
+    <string name="home_view_translated">翻訳された PDF を表示</string>
+    <string name="home_download_translated">翻訳された PDF をダウンロード</string>
+
+    <string name="progress_extracting">テキストを抽出中…</string>
+    <string name="progress_translating">翻訳中…</string>
+    <string name="progress_generating">PDF を生成中…</string>
+    <string name="progress_done">完了!</string>
+    <string name="progress_no_text">PDF にテキストが見つかりませんでした。</string>
+    <string name="progress_preparing_ocr">テキスト認識を準備中…</string>
+    <string name="progress_error_format">エラー: %1$s</string>
+
+    <string name="lang_select_title">翻訳言語を選択</string>
+    <string name="lang_translates_to_cd">翻訳先</string>
+    <string name="lang_section_downloaded">ダウンロード済み</string>
+    <string name="lang_section_available">利用可能</string>
+    <string name="lang_core_preinstalled">コアプリインストール済み</string>
+    <string name="lang_installed">インストール済み</string>
+    <string name="lang_installed_with_size_format">%1$s - インストール済み</string>
+    <string name="lang_downloading">ダウンロード中…</string>
+    <string name="lang_delete_cd">削除</string>
+    <string name="lang_download_cd">ダウンロード</string>
+    <string name="lang_picker_source_title">原文言語</string>
+    <string name="lang_picker_target_title">翻訳先言語</string>
+    <string name="lang_picker_cancel">キャンセル</string>
+    <string name="lang_picker_empty">先に言語パックをダウンロードしてください。</string>
+
+    <string name="history_search_label">入力して履歴を検索</string>
+    <string name="history_recent">最近の翻訳</string>
+    <string name="history_empty">翻訳はまだありません。</string>
+    <string name="history_no_results">結果が見つかりませんでした。</string>
+
+    <string name="settings_select_theme">テーマを選択</string>
+    <string name="theme_system">システム</string>
+    <string name="theme_dark">ダーク</string>
+    <string name="theme_light">ライト</string>
+    <string name="settings_send_review">レビューを送信</string>
+    <string name="settings_review_subtitle">ここをタップしてレビュー</string>
+    <string name="settings_thank_you">TranslatePDF をご利用いただきありがとうございます。^^</string>
+    <string name="update_available_title">アップデートあり</string>
+    <string name="update_available_subtitle_with_version">バージョン %1$s が Google Play で利用可能になりました</string>
+    <string name="update_available_subtitle">Google Play に新しいバージョンが利用可能です</string>
+    <string name="update_action">アップデート</string>
+
+    <string name="pdf_back">戻る</string>
+    <string name="pdf_share_cd">共有</string>
+    <string name="pdf_share_chooser">翻訳された PDF を共有</string>
+    <string name="pdf_page_cd_format">%1$d ページ</string>
+
+    <string name="toast_saved_to_downloads">「ダウンロード」に保存しました</string>
+</resources>

@@ -1,0 +1,63 @@
+<resources>
+    <string name="nav_home">Ana sayfa</string>
+    <string name="nav_languages">Diller</string>
+    <string name="nav_history">Geçmiş</string>
+    <string name="action_settings">Ayarlar</string>
+
+    <string name="home_open_pdf">PDF aç</string>
+    <string name="home_tap_select">Çevrilecek dosyayı seçmek için dokunun.</string>
+    <string name="home_tap_change">Dosyayı değiştirmek için dokunun</string>
+    <string name="home_extraction_method">PDF metin çıkarma yöntemini seçin</string>
+    <string name="home_method_direct">Doğrudan</string>
+    <string name="home_select_languages_hint">Dilleri Diller sekmesinden seçin</string>
+    <string name="home_translate">Çevir</string>
+    <string name="home_view_translated">Çevrilmiş PDF\'yi görüntüle</string>
+    <string name="home_download_translated">Çevrilmiş PDF\'yi indir</string>
+
+    <string name="progress_extracting">Metin çıkarılıyor…</string>
+    <string name="progress_translating">Çevriliyor…</string>
+    <string name="progress_generating">PDF oluşturuluyor…</string>
+    <string name="progress_done">Tamam!</string>
+    <string name="progress_no_text">PDF\'de metin bulunamadı.</string>
+    <string name="progress_preparing_ocr">Metin tanıma hazırlanıyor…</string>
+    <string name="progress_error_format">Hata: %1$s</string>
+
+    <string name="lang_select_title">Çeviri dillerini seçin</string>
+    <string name="lang_translates_to_cd">Şu dile çevirir</string>
+    <string name="lang_section_downloaded">İndirilenler</string>
+    <string name="lang_section_available">Kullanılabilir</string>
+    <string name="lang_core_preinstalled">Çekirdek önceden yüklü</string>
+    <string name="lang_installed">Yüklü</string>
+    <string name="lang_installed_with_size_format">%1$s - Yüklü</string>
+    <string name="lang_downloading">İndiriliyor…</string>
+    <string name="lang_delete_cd">Sil</string>
+    <string name="lang_download_cd">İndir</string>
+    <string name="lang_picker_source_title">Kaynak dil</string>
+    <string name="lang_picker_target_title">Hedef dil</string>
+    <string name="lang_picker_cancel">İptal</string>
+    <string name="lang_picker_empty">Önce bir dil paketi indirin.</string>
+
+    <string name="history_search_label">Geçmişte aramak için yazın</string>
+    <string name="history_recent">Son çeviriler</string>
+    <string name="history_empty">Henüz çeviri yok.</string>
+    <string name="history_no_results">Sonuç bulunamadı.</string>
+
+    <string name="settings_select_theme">Tema seçin</string>
+    <string name="theme_system">Sistem</string>
+    <string name="theme_dark">Koyu</string>
+    <string name="theme_light">Açık</string>
+    <string name="settings_send_review">Yorum gönder</string>
+    <string name="settings_review_subtitle">Yorum yapmak için dokunun</string>
+    <string name="settings_thank_you">TranslatePDF kullandığınız için teşekkürler. ^^</string>
+    <string name="update_available_title">Güncelleme var</string>
+    <string name="update_available_subtitle_with_version">%1$s sürümü artık Google Play\'de</string>
+    <string name="update_available_subtitle">Google Play\'de yeni bir sürüm var</string>
+    <string name="update_action">Güncelle</string>
+
+    <string name="pdf_back">Geri</string>
+    <string name="pdf_share_cd">Paylaş</string>
+    <string name="pdf_share_chooser">Çevrilmiş PDF\'yi paylaş</string>
+    <string name="pdf_page_cd_format">Sayfa %1$d</string>
+
+    <string name="toast_saved_to_downloads">İndirilenler\'e kaydedildi</string>
+</resources>

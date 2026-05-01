@@ -17,12 +17,18 @@ import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.SystemUpdate
 import androidx.compose.material.icons.automirrored.filled.TrendingFlat
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.dariuszkrych.translatepdf.R
 import com.dariuszkrych.translatepdf.LanguageInfo
 import com.dariuszkrych.translatepdf.TranslationViewModel
 import com.dariuszkrych.translatepdf.data.TranslationRecord
@@ -85,10 +91,10 @@ fun HomeScreen(
                         // Swap the label depending on whether the user has already picked a file.
                         if (fileName.isNotEmpty()) {
                             Text(fileName, style = MaterialTheme.typography.titleMedium)
-                            Text("Tap to change file")
+                            Text(stringResource(R.string.home_tap_change))
                         } else {
-                            Text("Open a PDF", style = MaterialTheme.typography.headlineSmall)
-                            Text("Tap to select file to translate.")
+                            Text(stringResource(R.string.home_open_pdf), style = MaterialTheme.typography.headlineSmall)
+                            Text(stringResource(R.string.home_tap_select))
                         }
                     }
                 }
@@ -98,7 +104,7 @@ fun HomeScreen(
 
             // Extraction-method toggle: OCR vs Direct
             Text(
-                "Select PDF text extraction method",
+                stringResource(R.string.home_extraction_method),
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onBackground
             )
@@ -107,7 +113,10 @@ fun HomeScreen(
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 // Pairs of (label shown to the user) → (internal key stored in VM).
-                val methods = listOf("OCR" to "ocr", "Direct" to "direct")
+                val methods = listOf(
+                    stringResource(R.string.home_method_ocr) to "ocr",
+                    stringResource(R.string.home_method_direct) to "direct"
+                )
                 methods.forEach { (label, value) ->
                     // Highlight the selected option as a filled Button; others are outlined.
                     if (extractionMethod == value) {
@@ -126,14 +135,18 @@ fun HomeScreen(
             if (sourceLang.isNotEmpty() && targetLang.isNotEmpty()) {
                 // Both languages chosen show human-readable names as "Source -> Target".
                 Text(
-                    "${TranslationViewModel.languageDisplayName(sourceLang)} -> ${TranslationViewModel.languageDisplayName(targetLang)}",
+                    stringResource(
+                        R.string.home_lang_pair_format,
+                        TranslationViewModel.languageDisplayName(sourceLang),
+                        TranslationViewModel.languageDisplayName(targetLang)
+                    ),
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onBackground
                 )
             } else {
                 // Nudge the user toward the Languages tab if either side is unset.
                 Text(
-                    "Select languages in the Languages tab",
+                    stringResource(R.string.home_select_languages_hint),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -149,7 +162,7 @@ fun HomeScreen(
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    "${translationPercent.toInt()}% - $translationProgress",
+                    stringResource(R.string.home_progress_format, translationPercent.toInt(), translationProgress),
                     color = MaterialTheme.colorScheme.onBackground
                 )
             } else if (translationProgress.isNotEmpty() && !hasTranslatedPdf) {
@@ -163,7 +176,7 @@ fun HomeScreen(
                     onClick = onTranslate,
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text("Translate")
+                    Text(stringResource(R.string.home_translate))
                 }
             }
 
@@ -176,7 +189,7 @@ fun HomeScreen(
                     border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
                     colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.onBackground)
                 ) {
-                    Text("View Translated PDF")
+                    Text(stringResource(R.string.home_view_translated))
                 }
                 Spacer(modifier = Modifier.height(8.dp))
                 OutlinedButton(
@@ -191,7 +204,7 @@ fun HomeScreen(
                         modifier = Modifier.size(18.dp)
                     )
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text("Download Translated PDF")
+                    Text(stringResource(R.string.home_download_translated))
                 }
             }
         }
@@ -231,7 +244,7 @@ fun LanguagesScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                "Select Translation Languages",
+                stringResource(R.string.lang_select_title),
                 style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.onBackground
             )
@@ -241,10 +254,10 @@ fun LanguagesScreen(
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
+                val unsetPlaceholder = stringResource(R.string.lang_unset_placeholder)
                 AssistChip(
                     onClick = { showSourcePicker.value = true },
-                    // Show "???" when nothing is picked yet.
-                    label = { Text(if (sourceLang.isNotEmpty()) sourceLang.uppercase() else "???") }
+                    label = { Text(if (sourceLang.isNotEmpty()) sourceLang.uppercase() else unsetPlaceholder) }
                 )
 //                Text(
 //                    " ----> ",
@@ -252,14 +265,13 @@ fun LanguagesScreen(
 //                    color = MaterialTheme.colorScheme.onBackground
 //                )
                 Icon(Icons.AutoMirrored.Filled.TrendingFlat,
-                    contentDescription = "Translates to",
+                    contentDescription = stringResource(R.string.lang_translates_to_cd),
                     modifier = Modifier.padding(horizontal = 16.dp),
                     tint = MaterialTheme.colorScheme.onBackground
                 )
                 AssistChip(
                     onClick = { showTargetPicker.value = true },
-                    // Show "???" when nothing is picked yet.
-                    label = { Text(if (targetLang.isNotEmpty()) targetLang.uppercase() else "???") }
+                    label = { Text(if (targetLang.isNotEmpty()) targetLang.uppercase() else unsetPlaceholder) }
                 )
             }
 
@@ -271,7 +283,7 @@ fun LanguagesScreen(
                     // Section header for the downloaded group.
                     item {
                         Text(
-                            "Downloaded",
+                            stringResource(R.string.lang_section_downloaded),
                             modifier = Modifier.padding(top = 16.dp, bottom = 4.dp),
                             style = MaterialTheme.typography.titleMedium,
                             color = MaterialTheme.colorScheme.onBackground
@@ -285,23 +297,23 @@ fun LanguagesScreen(
                                 // and shares bytes with every other language pair, so
                                 // there isn't a meaningful standalone size to show.
                                 if (lang.code == "en") {
-                                    Text("Core Pre-Installed")
+                                    Text(stringResource(R.string.lang_core_preinstalled))
                                 } else if (lang.sizeMb > 0f) {
                                     val sizeStr = if (lang.sizeMb >= 1f) {
-                                        "%.1f MB".format(lang.sizeMb)
+                                        stringResource(R.string.lang_size_mb_1f, lang.sizeMb)
                                     } else {
-                                        "%.2f MB".format(lang.sizeMb)
+                                        stringResource(R.string.lang_size_mb_2f, lang.sizeMb)
                                     }
-                                    Text("$sizeStr - Installed")
+                                    Text(stringResource(R.string.lang_installed_with_size_format, sizeStr))
                                 } else {
-                                    Text("Installed")
+                                    Text(stringResource(R.string.lang_installed))
                                 }
                             },
                             trailingContent = {
                                 // English is the base model — can't be deleted, show a checkmark instead.
                                 if (lang.code != "en") {
                                     IconButton(onClick = { onDelete(lang.code) }) {
-                                        Icon(Icons.Default.Delete, contentDescription = "Delete")
+                                        Icon(Icons.Default.Delete, contentDescription = stringResource(R.string.lang_delete_cd))
                                     }
                                 } else {
                                     // Match IconButton's 40dp default so the check lines up
@@ -324,7 +336,7 @@ fun LanguagesScreen(
                 if (availableLangs.isNotEmpty()) {
                     item {
                         Text(
-                            "Available",
+                            stringResource(R.string.lang_section_available),
                             modifier = Modifier.padding(top = 16.dp, bottom = 4.dp),
                             style = MaterialTheme.typography.titleMedium,
                             color = MaterialTheme.colorScheme.onBackground
@@ -335,7 +347,7 @@ fun LanguagesScreen(
                             headlineContent = { Text(lang.name) },
                             // Extra line with "Downloading..." only while a download is active.
                             supportingContent = if (lang.code in downloadingLangs) {
-                                { Text("Downloading...") }
+                                { Text(stringResource(R.string.lang_downloading)) }
                             } else null,
                             trailingContent = {
                                 // Spinner while in-flight, otherwise a download button.
@@ -348,7 +360,7 @@ fun LanguagesScreen(
                                     }
                                 } else {
                                     IconButton(onClick = { onDownload(lang.code) }) {
-                                        Icon(Icons.Default.Download, contentDescription = "Download")
+                                        Icon(Icons.Default.Download, contentDescription = stringResource(R.string.lang_download_cd))
                                     }
                                 }
                             }
@@ -362,7 +374,7 @@ fun LanguagesScreen(
     // Modal dialogs for picking source / target — shown based on local state flags above.
     if (showSourcePicker.value) {
         LanguagePickerDialog(
-            title = "Source Language",
+            title = stringResource(R.string.lang_picker_source_title),
             languages = downloadedLangs,
             onSelected = { onSourceSelected(it); showSourcePicker.value = false },
             onDismiss = { showSourcePicker.value = false }
@@ -370,7 +382,7 @@ fun LanguagesScreen(
     }
     if (showTargetPicker.value) {
         LanguagePickerDialog(
-            title = "Target Language",
+            title = stringResource(R.string.lang_picker_target_title),
             languages = downloadedLangs,
             onSelected = { onTargetSelected(it); showTargetPicker.value = false },
             onDismiss = { showTargetPicker.value = false }
@@ -401,7 +413,7 @@ private fun LanguagePickerDialog(
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Text(
-                            "${lang.name} (${lang.code.uppercase()})",
+                            stringResource(R.string.lang_picker_item_format, lang.name, lang.code.uppercase()),
                             modifier = Modifier.fillMaxWidth()
                         )
                     }
@@ -409,13 +421,13 @@ private fun LanguagePickerDialog(
                 // Empty-state hint if no models are downloaded at all yet.
                 if (languages.isEmpty()) {
                     item {
-                        Text("Download language packs first.")
+                        Text(stringResource(R.string.lang_picker_empty))
                     }
                 }
             }
         },
         confirmButton = {
-            TextButton(onClick = onDismiss) { Text("Cancel") }
+            TextButton(onClick = onDismiss) { Text(stringResource(R.string.lang_picker_cancel)) }
         }
     )
 }
@@ -443,14 +455,14 @@ fun HistoryScreen(
             OutlinedTextField(
                 value = searchQuery,
                 onValueChange = onSearchChanged,
-                label = { Text("Type to search history") },
+                label = { Text(stringResource(R.string.history_search_label)) },
                 modifier = Modifier.fillMaxWidth()
             )
 
             Spacer(modifier = Modifier.height(16.dp))
 
             Text(
-                "Recent Translations",
+                stringResource(R.string.history_recent),
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onBackground
             )
@@ -459,7 +471,7 @@ fun HistoryScreen(
                 // Empty-state message — different wording for no-history vs. no-search-results.
                 Spacer(modifier = Modifier.height(32.dp))
                 Text(
-                    if (searchQuery.isBlank()) "No translations yet." else "No results found.",
+                    if (searchQuery.isBlank()) stringResource(R.string.history_empty) else stringResource(R.string.history_no_results),
                     modifier = Modifier.align(Alignment.CenterHorizontally),
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -476,7 +488,7 @@ fun HistoryScreen(
 
                         ListItem(
                             headlineContent = { Text(record.fileName) },
-                            supportingContent = { Text("$srcName -> $tgtName\n$dateStr") },
+                            supportingContent = { Text(stringResource(R.string.history_supporting_format, srcName, tgtName, dateStr)) },
                             trailingContent = {
                                 IconButton(onClick = { onRecordDelete(record) }) {
                                     Icon(Icons.Default.Delete, contentDescription = "Delete")
@@ -497,6 +509,23 @@ fun HistoryScreen(
  * review page. Defaults on the parameters exist so Compose previews don't break.
  */
 @Composable
+private fun ThemeButtonLabel(
+    label: String,
+    fontSize: TextUnit,
+    onShrink: () -> Unit
+) {
+    Text(
+        text = label,
+        fontSize = fontSize,
+        maxLines = 1,
+        softWrap = false,
+        onTextLayout = { result ->
+            if (result.hasVisualOverflow) onShrink()
+        }
+    )
+}
+
+@Composable
 fun SettingsScreen(
     currentTheme: String = "system",
     onThemeSelected: (String) -> Unit = {},
@@ -514,20 +543,32 @@ fun SettingsScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                "Select Theme",
+                stringResource(R.string.settings_select_theme),
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onBackground
             )
             Row(modifier = Modifier.padding(vertical = 16.dp)) {
                 // Pair of (user-facing label) → (persisted key).
-                val themes = listOf("System" to "system", "Dark" to "dark", "Light" to "light")
+                val themes = listOf(
+                    stringResource(R.string.theme_system) to "system",
+                    stringResource(R.string.theme_dark) to "dark",
+                    stringResource(R.string.theme_light) to "light"
+                )
+                // Shrinks all three labels in lockstep if any would wrap to a second
+                // line — long translations (e.g. Russian "Системная", Maltese
+                // "Tas-sistema", Polish "Systemowy") can otherwise overflow the
+                // right-most button.
+                var themeFontSize by remember(themes) { mutableStateOf(14.sp) }
                 themes.forEachIndexed { index, (label, value) ->
                     // Small horizontal gap between buttons (skip before the first).
                     if (index > 0) Spacer(modifier = Modifier.width(8.dp))
                     val isSelected = currentTheme == value
+                    val onShrink = { if (themeFontSize > 12.sp) themeFontSize = 12.sp }
                     // Selected option is filled; the others are outlined for contrast.
                     if (isSelected) {
-                        Button(onClick = { onThemeSelected(value) }) { Text(label) }
+                        Button(onClick = { onThemeSelected(value) }) {
+                            ThemeButtonLabel(label, themeFontSize, onShrink)
+                        }
                     } else {
                         OutlinedButton(
                             onClick = { onThemeSelected(value) },
@@ -535,7 +576,7 @@ fun SettingsScreen(
                             colors = ButtonDefaults.outlinedButtonColors(
                                 contentColor = MaterialTheme.colorScheme.onBackground
                             )
-                        ) { Text(label) }
+                        ) { ThemeButtonLabel(label, themeFontSize, onShrink) }
                     }
                 }
             }
@@ -558,8 +599,8 @@ fun SettingsScreen(
                 modifier = Modifier.fillMaxWidth().clickable { onReviewClick() }
             ) {
                 ListItem(
-                    headlineContent = { Text("Send a Review") },
-                    supportingContent = { Text("Click here to review") }
+                    headlineContent = { Text(stringResource(R.string.settings_send_review)) },
+                    supportingContent = { Text(stringResource(R.string.settings_review_subtitle)) }
                 )
             }
 
@@ -567,7 +608,7 @@ fun SettingsScreen(
             Spacer(modifier = Modifier.weight(1f))
 
             Text(
-                "Thank you for using TranslatePDF. ^^",
+                stringResource(R.string.settings_thank_you),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onBackground
             )
@@ -586,9 +627,9 @@ private fun UpdateAvailableBanner(
     onUpdateClick: () -> Unit
 ) {
     val subtitle = if (latestVersionName != null) {
-        "Version $latestVersionName is now available on Google Play"
+        stringResource(R.string.update_available_subtitle_with_version, latestVersionName)
     } else {
-        "A new version is now available on Google Play"
+        stringResource(R.string.update_available_subtitle)
     }
     Card(modifier = Modifier.fillMaxWidth()) {
         ListItem(
@@ -598,10 +639,10 @@ private fun UpdateAvailableBanner(
                     contentDescription = null
                 )
             },
-            headlineContent = { Text("Update available") },
+            headlineContent = { Text(stringResource(R.string.update_available_title)) },
             supportingContent = { Text(subtitle) },
             trailingContent = {
-                TextButton(onClick = onUpdateClick) { Text("Update") }
+                TextButton(onClick = onUpdateClick) { Text(stringResource(R.string.update_action)) }
             }
         )
     }
@@ -628,9 +669,9 @@ fun PdfViewerScreen(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                TextButton(onClick = onBack) { Text("Back") }
+                TextButton(onClick = onBack) { Text(stringResource(R.string.pdf_back)) }
                 IconButton(onClick = onShare) {
-                    Icon(Icons.Default.Share, contentDescription = "Share")
+                    Icon(Icons.Default.Share, contentDescription = stringResource(R.string.pdf_share_cd))
                 }
             }
 
@@ -651,7 +692,7 @@ fun PdfViewerScreen(
                             // Bitmap → ImageBitmap conversion is a cheap wrapper (no copy).
                             Image(
                                 bitmap = pages[index].asImageBitmap(),
-                                contentDescription = "Page ${index + 1}",
+                                contentDescription = stringResource(R.string.pdf_page_cd_format, index + 1),
                                 modifier = Modifier.fillMaxWidth()
                             )
                         }
