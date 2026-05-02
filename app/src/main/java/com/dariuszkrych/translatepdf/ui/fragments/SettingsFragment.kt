@@ -1,6 +1,5 @@
 package com.dariuszkrych.translatepdf.ui.fragments
 
-import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
@@ -22,7 +21,7 @@ import com.dariuszkrych.translatepdf.ui.theme.TranslatePDFTheme
 
 /**
  * Overlay fragment opened from the toolbar gear icon. Lets the user choose a
- * theme (System / Dark / Light) and open the Play Store review page.
+ * theme (System / Dark / Light) and open the project's GitHub repo.
  *
  * Persistence uses SharedPreferences (a tiny key/value store on disk) so the
  * chosen theme survives restarts — SQLite would be overkill for one string.
@@ -53,22 +52,13 @@ class SettingsFragment : Fragment() {
                         currentTheme = currentTheme.value,
                         updateAvailable = viewModel.updateAvailable,
                         latestVersionName = viewModel.latestVersionName,
+                        updateDownloading = viewModel.updateDownloading,
+                        updateProgress = viewModel.updateProgress,
+                        updateError = viewModel.updateError,
                         onUpdateClick = {
-                            // Prefer the Play Store app (market://) — Play handles actual
-                            // update install. Fall back to the canonical web URL (or the
-                            // update_url supplied by version.json) if Play isn't installed.
-                            val packageName = requireContext().packageName
-                            val fallbackUrl = viewModel.updateUrl
-                                ?: "https://play.google.com/store/apps/details?id=$packageName"
-                            val marketIntent = Intent(
-                                Intent.ACTION_VIEW,
-                                Uri.parse("market://details?id=$packageName")
-                            ).apply { setPackage("com.android.vending") }
-                            try {
-                                startActivity(marketIntent)
-                            } catch (_: ActivityNotFoundException) {
-                                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(fallbackUrl)))
-                            }
+                            // Stream the APK from GitHub straight into local cache and hand it
+                            // to the system package installer. No Play Store hop.
+                            viewModel.downloadAndInstallUpdate(requireContext())
                         },
                         onThemeSelected = { theme ->
                             // 1) Persist the choice so next launch opens with it already applied.
@@ -98,14 +88,12 @@ class SettingsFragment : Fragment() {
                             }
                         },
                         onReviewClick = {
-                            // Try to open the Play Store app directly; if it isn't installed
-                            // (emulator, sideload), fall back to the https:// URL in a browser.
-                            val packageName = requireContext().packageName
-                            try {
-                                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=$packageName")))
-                            } catch (_: Exception) {
-                                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=$packageName")))
-                            }
+                            startActivity(
+                                Intent(
+                                    Intent.ACTION_VIEW,
+                                    Uri.parse("https://github.com/dariuszkrych/TranslatePDF_Android")
+                                )
+                            )
                         }
                     )
                 }

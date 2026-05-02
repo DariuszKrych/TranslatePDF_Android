@@ -2,13 +2,16 @@ package com.dariuszkrych.translatepdf
 
 import android.app.Application
 import android.content.Context
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Typeface
 import android.graphics.pdf.PdfRenderer
 import android.net.Uri
+import android.os.Build
 import android.os.ParcelFileDescriptor
+import android.provider.Settings
 import android.text.Layout
 import android.text.StaticLayout
 import android.text.TextDirectionHeuristics
@@ -17,6 +20,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.core.content.FileProvider
 import androidx.core.graphics.createBitmap
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
@@ -154,7 +158,7 @@ class TranslationViewModel(application: Application) : AndroidViewModel(applicat
     private val downloadQueue = ArrayDeque<String>()
     private var activeDownload: String? = null
 
-    // Update-check state (hybrid HTTP check + Play Store intent)
+    // Update-check state (HTTP check + direct APK install from GitHub).
     // Flipped to true when version.json on GitHub reports a higher versionCode
     // than the installed build; drives the Settings "Update available" banner.
     var updateAvailable by mutableStateOf(false)
@@ -162,8 +166,17 @@ class TranslationViewModel(application: Application) : AndroidViewModel(applicat
     // versionName of the newer release (for the banner subtitle). Null until checked.
     var latestVersionName by mutableStateOf<String?>(null)
         private set
-    // Canonical web URL used as fallback if the Play Store app isn't installed.
-    var updateUrl by mutableStateOf<String?>(null)
+    // Direct download URL of the new APK on GitHub (e.g. a Releases asset).
+    var apkUrl by mutableStateOf<String?>(null)
+        private set
+    // True while the APK is being streamed from GitHub to local cache.
+    var updateDownloading by mutableStateOf(false)
+        private set
+    // 0..100 — only meaningful while updateDownloading is true.
+    var updateProgress by mutableStateOf(0)
+        private set
+    // Last download error (null on success / idle). Surfaces in the banner.
+    var updateError by mutableStateOf<String?>(null)
         private set
 
     init {
@@ -942,16 +955,13 @@ class TranslationViewModel(application: Application) : AndroidViewModel(applicat
         }
     }
 
-    // Update check
+    // Update check + direct GitHub install
 
     /**
      * Fire-and-forget HTTP GET against the app's `version.json` on GitHub to see
-     * whether a newer release exists on Google Play. If `latest_version_code` in
-     * the response is strictly greater than `currentVersionCode`, flip the
-     * `updateAvailable` state so the Settings screen shows the banner.
-     *
-     * The update itself is performed by the Play Store app via a `market://` intent
-     * from the UI — this function only decides whether to surface the prompt.
+     * whether a newer release exists. If `latest_version_code` in the response is
+     * strictly greater than `currentVersionCode`, flip the `updateAvailable` state
+     * so the Settings screen shows the banner.
      *
      * All exceptions (offline, DNS, 404, malformed JSON) are swallowed. The update
      * check is best-effort; a failed check must never break startup.
@@ -959,27 +969,22 @@ class TranslationViewModel(application: Application) : AndroidViewModel(applicat
     fun checkForAppUpdate(currentVersionCode: Int) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                // The "source of truth" — raw GitHub URL served fresh, no CDN caching
-                // concerns beyond a minute or two.
                 val url = URL(VERSION_JSON_URL)
                 val connection = url.openConnection() as HttpURLConnection
-                // Short timeouts so a flaky network never blocks the ViewModel.
                 connection.connectTimeout = 5000
                 connection.readTimeout = 5000
                 val response = connection.inputStream.bufferedReader().use { it.readText() }
                 connection.disconnect()
 
-                // Real JSON parsing (not regex) — the schema has multiple fields now.
                 val json = JSONObject(response)
                 val latestCode = json.optInt("latest_version_code", -1)
                 val latestName = json.optString("latest_version_name", "").ifBlank { null }
-                val url2 = json.optString("update_url", "").ifBlank { null }
+                val downloadUrl = json.optString("apk_url", "").ifBlank { null }
 
-                if (latestCode > 0 && latestCode > currentVersionCode) {
-                    // Publish to Compose state on the main thread so any open screen recomposes.
+                if (latestCode > 0 && latestCode > currentVersionCode && downloadUrl != null) {
                     withContext(Dispatchers.Main) {
                         latestVersionName = latestName
-                        updateUrl = url2
+                        apkUrl = downloadUrl
                         updateAvailable = true
                     }
                 }
@@ -987,6 +992,92 @@ class TranslationViewModel(application: Application) : AndroidViewModel(applicat
                 // Best effort — silently ignored (offline, 404, malformed JSON, …).
             }
         }
+    }
+
+    /**
+     * Download the APK pointed at by `apkUrl` to the app's cache dir, then hand it
+     * to the system package installer. On Android 8+ the user may first be sent to
+     * the "Install unknown apps" settings page if they haven't granted the app
+     * permission to install packages — they return here, tap Update again, and the
+     * cached APK is reused.
+     */
+    fun downloadAndInstallUpdate(context: Context) {
+        val downloadUrl = apkUrl ?: return
+        if (updateDownloading) return
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O &&
+            !context.packageManager.canRequestPackageInstalls()
+        ) {
+            val settingsIntent = Intent(
+                Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES,
+                Uri.parse("package:${context.packageName}")
+            ).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            context.startActivity(settingsIntent)
+            return
+        }
+
+        updateDownloading = true
+        updateProgress = 0
+        updateError = null
+
+        val appContext = context.applicationContext
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val connection = (URL(downloadUrl).openConnection() as HttpURLConnection).apply {
+                    connectTimeout = 15000
+                    readTimeout = 30000
+                    instanceFollowRedirects = true
+                }
+                val total = connection.contentLengthLong
+
+                val cacheDir = File(appContext.cacheDir, "updates").apply { mkdirs() }
+                val apkFile = File(cacheDir, "update.apk")
+                if (apkFile.exists()) apkFile.delete()
+
+                connection.inputStream.use { input ->
+                    apkFile.outputStream().use { output ->
+                        val buffer = ByteArray(16 * 1024)
+                        var downloaded = 0L
+                        var lastReported = -1
+                        while (true) {
+                            val n = input.read(buffer)
+                            if (n < 0) break
+                            output.write(buffer, 0, n)
+                            downloaded += n
+                            if (total > 0) {
+                                val pct = ((downloaded * 100) / total).toInt()
+                                if (pct != lastReported) {
+                                    lastReported = pct
+                                    withContext(Dispatchers.Main) { updateProgress = pct }
+                                }
+                            }
+                        }
+                    }
+                }
+                connection.disconnect()
+
+                withContext(Dispatchers.Main) {
+                    updateProgress = 100
+                    launchInstaller(appContext, apkFile)
+                    updateDownloading = false
+                }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    updateDownloading = false
+                    updateError = e.message ?: "Download failed"
+                }
+            }
+        }
+    }
+
+    private fun launchInstaller(context: Context, apkFile: File) {
+        val authority = "${context.packageName}.fileprovider"
+        val uri = FileProvider.getUriForFile(context, authority, apkFile)
+        val intent = Intent(Intent.ACTION_VIEW).apply {
+            setDataAndType(uri, "application/vnd.android.package-archive")
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        }
+        context.startActivity(intent)
     }
 
     companion object {

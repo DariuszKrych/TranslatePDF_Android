@@ -1,6 +1,6 @@
 {
   "latest_version_code": 1,
   "latest_version_name": "1.0",
-  "update_url": "https://play.google.com/store/apps/details?id=com.dariuszkrych.translatepdf",
+  "apk_url": "https://github.com/dariuszkrych/TranslatePDF_Android/releases/latest/download/TranslatePDF.apk",
   "is_critical": false
 }

@@ -50,8 +50,10 @@
     <string name="settings_review_subtitle">Yorum yapmak için dokunun</string>
     <string name="settings_thank_you">TranslatePDF kullandığınız için teşekkürler. ^^</string>
     <string name="update_available_title">Güncelleme var</string>
-    <string name="update_available_subtitle_with_version">%1$s sürümü artık Google Play\'de</string>
-    <string name="update_available_subtitle">Google Play\'de yeni bir sürüm var</string>
+    <string name="update_available_subtitle_with_version">%1$s sürümü artık mevcut</string>
+    <string name="update_available_subtitle">Yeni bir sürüm mevcut</string>
+    <string name="update_downloading">İndiriliyor… %1$d%%</string>
+    <string name="update_failed">İndirme başarısız: %1$s</string>
     <string name="update_action">Güncelle</string>
 
     <string name="pdf_back">Geri</string>

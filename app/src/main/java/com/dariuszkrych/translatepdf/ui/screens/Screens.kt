@@ -532,6 +532,9 @@ fun SettingsScreen(
     onReviewClick: () -> Unit = {},
     updateAvailable: Boolean = false,
     latestVersionName: String? = null,
+    updateDownloading: Boolean = false,
+    updateProgress: Int = 0,
+    updateError: String? = null,
     onUpdateClick: () -> Unit = {}
 ) {
     Surface(
@@ -583,12 +586,16 @@ fun SettingsScreen(
 
             Spacer(modifier = Modifier.height(32.dp))
 
-            // "Update available" banner — Flexible Update UX. Only rendered when the
-            // HTTP check against GitHub's version.json reports a higher versionCode
-            // than BuildConfig.VERSION_CODE. Tapping Update launches the Play Store.
+            // "Update available" banner. Only rendered when the HTTP check against
+            // GitHub's version.json reports a higher versionCode than
+            // BuildConfig.VERSION_CODE. Tapping Update streams the new APK from
+            // GitHub and hands it to the system package installer.
             if (updateAvailable) {
                 UpdateAvailableBanner(
                     latestVersionName = latestVersionName,
+                    downloading = updateDownloading,
+                    progress = updateProgress,
+                    error = updateError,
                     onUpdateClick = onUpdateClick
                 )
                 Spacer(modifier = Modifier.height(16.dp))
@@ -617,19 +624,24 @@ fun SettingsScreen(
 }
 
 /**
- * Non-blocking "Update available" banner shown in Settings when the hybrid update
- * check finds a newer release on Google Play. Matches the visual style of the
- * adjacent "Send a Review" card so it feels native to the screen.
+ * Non-blocking "Update available" banner shown in Settings when the version check
+ * finds a newer release on GitHub. Tapping Update kicks off the in-app APK download
+ * and hands the result to the system package installer.
  */
 @Composable
 private fun UpdateAvailableBanner(
     latestVersionName: String?,
+    downloading: Boolean,
+    progress: Int,
+    error: String?,
     onUpdateClick: () -> Unit
 ) {
-    val subtitle = if (latestVersionName != null) {
-        stringResource(R.string.update_available_subtitle_with_version, latestVersionName)
-    } else {
-        stringResource(R.string.update_available_subtitle)
+    val subtitle = when {
+        downloading -> stringResource(R.string.update_downloading, progress)
+        error != null -> stringResource(R.string.update_failed, error)
+        latestVersionName != null ->
+            stringResource(R.string.update_available_subtitle_with_version, latestVersionName)
+        else -> stringResource(R.string.update_available_subtitle)
     }
     Card(modifier = Modifier.fillMaxWidth()) {
         ListItem(
@@ -642,7 +654,9 @@ private fun UpdateAvailableBanner(
             headlineContent = { Text(stringResource(R.string.update_available_title)) },
             supportingContent = { Text(subtitle) },
             trailingContent = {
-                TextButton(onClick = onUpdateClick) { Text(stringResource(R.string.update_action)) }
+                TextButton(onClick = onUpdateClick, enabled = !downloading) {
+                    Text(stringResource(R.string.update_action))
+                }
             }
         )
     }

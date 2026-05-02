@@ -50,8 +50,10 @@
     <string name="settings_review_subtitle">Toca aquí para reseñar</string>
     <string name="settings_thank_you">Gracias por usar TranslatePDF. ^^</string>
     <string name="update_available_title">Actualización disponible</string>
-    <string name="update_available_subtitle_with_version">La versión %1$s ya está disponible en Google Play</string>
-    <string name="update_available_subtitle">Una nueva versión está disponible en Google Play</string>
+    <string name="update_available_subtitle_with_version">La versión %1$s ya está disponible</string>
+    <string name="update_available_subtitle">Hay una nueva versión disponible</string>
+    <string name="update_downloading">Descargando… %1$d%%</string>
+    <string name="update_failed">Error de descarga: %1$s</string>
     <string name="update_action">Actualizar</string>
 
     <string name="pdf_back">Atrás</string>

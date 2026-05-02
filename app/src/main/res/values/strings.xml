@@ -66,8 +66,10 @@
     <string name="settings_review_subtitle">Click here to review</string>
     <string name="settings_thank_you">Thank you for using TranslatePDF. ^^</string>
     <string name="update_available_title">Update available</string>
-    <string name="update_available_subtitle_with_version">Version %1$s is now available on Google Play</string>
-    <string name="update_available_subtitle">A new version is now available on Google Play</string>
+    <string name="update_available_subtitle_with_version">Version %1$s is now available</string>
+    <string name="update_available_subtitle">A new version is now available</string>
+    <string name="update_downloading">Downloading… %1$d%%</string>
+    <string name="update_failed">Download failed: %1$s</string>
     <string name="update_action">Update</string>
 
     <!-- PDF viewer -->

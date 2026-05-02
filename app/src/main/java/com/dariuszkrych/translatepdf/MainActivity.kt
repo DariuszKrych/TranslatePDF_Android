@@ -136,9 +136,9 @@ class MainActivity : AppCompatActivity() {
 
         // Paint toolbar/nav/status-bar to match current theme and poll GitHub for a new app version.
         updateSystemBars()
-        // Hybrid update check — HTTP GET decides if a newer version exists on Google Play;
-        // the Settings screen shows a non-blocking banner and the Play Store app performs the
-        // actual update via a `market://` intent when the user taps it.
+        // GitHub-direct update check — HTTP GET decides if a newer version exists;
+        // the Settings screen shows a non-blocking banner. Tapping Update streams the
+        // APK from GitHub and hands it to the system package installer.
         viewModel.checkForAppUpdate(BuildConfig.VERSION_CODE)
     }
 

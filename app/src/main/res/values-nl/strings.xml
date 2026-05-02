@@ -50,8 +50,10 @@
     <string name="settings_review_subtitle">Tik om te beoordelen</string>
     <string name="settings_thank_you">Bedankt voor het gebruik van TranslatePDF. ^^</string>
     <string name="update_available_title">Update beschikbaar</string>
-    <string name="update_available_subtitle_with_version">Versie %1$s is nu beschikbaar in Google Play</string>
-    <string name="update_available_subtitle">Een nieuwe versie is beschikbaar in Google Play</string>
+    <string name="update_available_subtitle_with_version">Versie %1$s is nu beschikbaar</string>
+    <string name="update_available_subtitle">Een nieuwe versie is beschikbaar</string>
+    <string name="update_downloading">Bezig met downloaden… %1$d%%</string>
+    <string name="update_failed">Download mislukt: %1$s</string>
     <string name="update_action">Bijwerken</string>
 
     <string name="pdf_back">Terug</string>

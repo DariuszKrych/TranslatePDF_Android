@@ -50,8 +50,10 @@
     <string name="settings_review_subtitle">Agħfas hawn biex tirrevedi</string>
     <string name="settings_thank_you">Grazzi talli qed tuża TranslatePDF. ^^</string>
     <string name="update_available_title">Aġġornament disponibbli</string>
-    <string name="update_available_subtitle_with_version">Il-verżjoni %1$s issa hi disponibbli fuq Google Play</string>
-    <string name="update_available_subtitle">Verżjoni ġdida hi disponibbli fuq Google Play</string>
+    <string name="update_available_subtitle_with_version">Il-verżjoni %1$s issa hi disponibbli</string>
+    <string name="update_available_subtitle">Verżjoni ġdida hi disponibbli</string>
+    <string name="update_downloading">Qed jitniżżel… %1$d%%</string>
+    <string name="update_failed">It-tniżżil falla: %1$s</string>
     <string name="update_action">Aġġorna</string>
 
     <string name="pdf_back">Lura</string>

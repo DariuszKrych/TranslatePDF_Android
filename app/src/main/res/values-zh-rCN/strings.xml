@@ -50,8 +50,10 @@
     <string name="settings_review_subtitle">点按以评价</string>
     <string name="settings_thank_you">感谢使用 TranslatePDF。^^</string>
     <string name="update_available_title">有可用更新</string>
-    <string name="update_available_subtitle_with_version">版本 %1$s 现已在 Google Play 上线</string>
-    <string name="update_available_subtitle">Google Play 上有新版本可用</string>
+    <string name="update_available_subtitle_with_version">版本 %1$s 现已可用</string>
+    <string name="update_available_subtitle">有新版本可用</string>
+    <string name="update_downloading">正在下载… %1$d%%</string>
+    <string name="update_failed">下载失败：%1$s</string>
     <string name="update_action">更新</string>
 
     <string name="pdf_back">返回</string>
