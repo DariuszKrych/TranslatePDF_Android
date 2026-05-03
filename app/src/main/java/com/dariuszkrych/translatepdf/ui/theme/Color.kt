@@ -7,6 +7,5 @@ import androidx.compose.ui.graphics.Color
 
 val Black = Color(0xFF000000)       // Pure black — dark-mode background / light-mode foreground.
 val White = Color(0xFFFFFFFF)       // Pure white — light-mode background / dark-mode foreground.
-//val DarkGrey = Color(0xFF333333)    // Neutral dark grey used for containers/toolbars in dark mode.
-val DarkGrey = Color(0xFF1E9FA6)
+val DarkGrey = Color(0xFF333333)    // Neutral dark grey used for containers/toolbars in dark mode.
 val LightGrey = Color(0xFFDDDDDD)   // Neutral light grey used for containers/toolbars in light mode.
