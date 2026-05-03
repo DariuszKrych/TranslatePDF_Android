@@ -315,10 +315,21 @@ class TranslationViewModel(application: Application) : AndroidViewModel(applicat
                 if (!alreadyRecorded && deltaMb > 0.05f) {
                     modelSizePrefs.edit().putFloat(prefKey(code), deltaMb).apply()
                 }
-                downloadingLangs = downloadingLangs - code
-                activeDownload = null
-                refreshLanguages() // Flip the row from "Available" to "Downloaded".
-                startNextDownloadIfIdle()
+                // CJK / Devanagari OCR ships as a separate Play Services optional
+                // module that ML Kit otherwise pulls lazily on the first
+                // recognizer.process() call — which fails with "Waiting for the
+                // text optional module to be downloaded" if the user runs OCR
+                // before that lazy fetch completes (e.g. they're now offline).
+                // Fetch it now while we know the device is online and the user
+                // has just consented to a language install. The spinner stays up
+                // until both downloads land so "Downloaded" only ever means
+                // translate model AND OCR module are present.
+                ensureOcrModuleForLang(code) {
+                    downloadingLangs = downloadingLangs - code
+                    activeDownload = null
+                    refreshLanguages() // Flip the row from "Available" to "Downloaded".
+                    startNextDownloadIfIdle()
+                }
             }
             .addOnFailureListener {
                 // Clear both the spinner and the active slot so the queue advances
@@ -501,18 +512,57 @@ class TranslationViewModel(application: Application) : AndroidViewModel(applicat
     // OCR text extraction (ML Kit)
 
     /**
-     * Pick the best-suited ML Kit text recognizer for the source language.
-     * Different scripts need different recognizers (CJK / Devanagari / Latin).
+     * Recognizer for scripts that ship as a separate Play Services optional
+     * module (CJK, Devanagari). Returns null for languages whose script is
+     * covered by the bundled Latin recognizer — those need no extra download.
      */
-    private fun getOcrRecognizer(): TextRecognizer {
-        return when (sourceLang) {
+    private fun optionalOcrRecognizer(code: String): TextRecognizer? {
+        return when (code) {
             "zh" -> TextRecognition.getClient(ChineseTextRecognizerOptions.Builder().build())
             "ja" -> TextRecognition.getClient(JapaneseTextRecognizerOptions.Builder().build())
             "ko" -> TextRecognition.getClient(KoreanTextRecognizerOptions.Builder().build())
             // Devanagari script covers Hindi, Marathi, Nepali, Sanskrit.
             "hi", "mr", "ne", "sa" -> TextRecognition.getClient(DevanagariTextRecognizerOptions.Builder().build())
-            // Latin recognizer is the catch-all for every other supported script.
-            else -> TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
+            else -> null
+        }
+    }
+
+    /**
+     * Pick the best-suited ML Kit text recognizer for the source language.
+     * Different scripts need different recognizers (CJK / Devanagari / Latin).
+     */
+    private fun getOcrRecognizer(): TextRecognizer {
+        return optionalOcrRecognizer(sourceLang)
+            ?: TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
+    }
+
+    /**
+     * Pre-fetch the optional Play Services module that backs the script-specific
+     * OCR recognizer for `code`, then run `onComplete`. No-op (and immediately
+     * completes) for codes that use the bundled Latin recognizer.
+     *
+     * Failures are intentionally swallowed: if the module install fails (Play
+     * Services unavailable, transient network), the translate model has already
+     * landed and we don't want to leave the queue stuck — the lazy install in
+     * `extractTextOcr` remains as a fallback the next time the user is online.
+     */
+    private fun ensureOcrModuleForLang(code: String, onComplete: () -> Unit) {
+        val recognizer = optionalOcrRecognizer(code)
+        if (recognizer == null) {
+            onComplete()
+            return
+        }
+        try {
+            val request = ModuleInstallRequest.newBuilder().addApi(recognizer).build()
+            ModuleInstall.getClient(getApplication())
+                .installModules(request)
+                .addOnCompleteListener {
+                    recognizer.close()
+                    onComplete()
+                }
+        } catch (_: Exception) {
+            recognizer.close()
+            onComplete()
         }
     }
 
@@ -907,6 +957,11 @@ class TranslationViewModel(application: Application) : AndroidViewModel(applicat
                 // 2x sampling for crisp rendering on typical phone screens.
                 // KTX `createBitmap` defaults to ARGB_8888, which is exactly what we want.
                 val bitmap = createBitmap(page.width * 2, page.height * 2)
+                // PdfRenderer only paints drawn content; pixels the PDF didn't touch
+                // stay transparent and let the themed Surface/Card behind the preview
+                // bleed through, making the page look dark-grey/light-grey instead of
+                // white. Pre-fill so every page is opaque white like a real PDF page.
+                bitmap.eraseColor(Color.WHITE)
                 page.render(bitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY)
                 bitmaps.add(bitmap)
                 page.close()
