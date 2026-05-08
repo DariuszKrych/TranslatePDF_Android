@@ -37,9 +37,9 @@ import java.util.Date
 import java.util.Locale
 
 /**
- * Home tab UI. Stateless composable — every value comes from the caller (the Fragment
- * binds it to the ViewModel). Lets the user pick a PDF, choose extraction method,
- * see translation progress, and act on the translated result.
+ * Home tab UI. Stateless composable. Every value comes from the caller (the
+ * Fragment binds it to the ViewModel). Lets the user pick a PDF, choose an
+ * extraction method, see translation progress, and act on the translated result.
  */
 @Composable
 fun HomeScreen(
@@ -69,12 +69,13 @@ fun HomeScreen(
         ) {
             Spacer(modifier = Modifier.height(32.dp))
 
-            // File picker card: tapping anywhere on the card opens SAF (Storage Access Framework)
+            // File picker card. Tapping anywhere on the card opens the Storage
+            // Access Framework picker filtered to PDFs.
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
                     // Disable the click while a translation is running so the picker
-                    // can't swap the file mid-operation.
+                    // cannot swap the file mid operation.
                     .clickable(enabled = !isTranslating) { onPickPdf() },
                 elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
             ) {
@@ -102,7 +103,7 @@ fun HomeScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // Extraction-method toggle: OCR vs Direct
+            // Extraction method toggle. Choice between OCR and Direct.
             Text(
                 stringResource(R.string.home_extraction_method),
                 style = MaterialTheme.typography.titleMedium,
@@ -112,13 +113,13 @@ fun HomeScreen(
                 modifier = Modifier.padding(16.dp),
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                // Pairs of (label shown to the user) → (internal key stored in VM).
+                // Pairs of (label shown to the user) and (internal key stored in the VM).
                 val methods = listOf(
                     stringResource(R.string.home_method_ocr) to "ocr",
                     stringResource(R.string.home_method_direct) to "direct"
                 )
                 methods.forEach { (label, value) ->
-                    // Highlight the selected option as a filled Button; others are outlined.
+                    // Highlight the selected option as a filled Button. The others are outlined.
                     if (extractionMethod == value) {
                         Button(onClick = {}) { Text(label) }
                     } else {
@@ -131,9 +132,9 @@ fun HomeScreen(
                 }
             }
 
-            // Language pair display / prompt
+            // Language pair display or prompt to pick one.
             if (sourceLang.isNotEmpty() && targetLang.isNotEmpty()) {
-                // Both languages chosen show human-readable names as "Source -> Target".
+                // Both languages chosen. Show human readable names as "Source to Target".
                 Text(
                     stringResource(
                         R.string.home_lang_pair_format,
@@ -154,10 +155,10 @@ fun HomeScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            // Progress bar (during translation) or final message
+            // Progress bar during translation, or a final status message afterwards.
             if (isTranslating) {
                 LinearProgressIndicator(
-                    progress = { translationPercent / 100f }, // Indicator expects 0..1.
+                    progress = { translationPercent / 100f }, // Indicator expects a 0 to 1 fraction.
                     modifier = Modifier.fillMaxWidth(),
                 )
                 Spacer(modifier = Modifier.height(8.dp))
@@ -170,7 +171,7 @@ fun HomeScreen(
                 Text(translationProgress, color = MaterialTheme.colorScheme.onBackground)
             }
 
-            // "Translate" button — only shown when every prerequisite is met
+            // Translate button. Only shown when every prerequisite is met.
             if (hasPdf && !isTranslating && sourceLang.isNotEmpty() && targetLang.isNotEmpty()) {
                 Button(
                     onClick = onTranslate,
@@ -227,12 +228,14 @@ fun LanguagesScreen(
     onDelete: (String) -> Unit
 ) {
     // Local Compose state for which picker dialog (if any) is open.
-    // Using the non-delegated form (`.value` read/write) avoids the IDE's "assigned value
-    // is never read" false positive it raises for `by`-delegated state in lambdas.
+    // Using the non delegated form (.value read and write) avoids the IDE's
+    // "assigned value is never read" false positive it raises for by delegated
+    // state inside lambdas.
     val showSourcePicker = remember { mutableStateOf(false) }
     val showTargetPicker = remember { mutableStateOf(false) }
 
-    // Only downloaded languages can be chosen as source/target (translator needs both models offline).
+    // Only downloaded languages can be chosen as source or target. The translator
+    // needs both offline models present.
     val downloadedLangs = languages.filter { it.downloaded }
 
     Surface(
@@ -248,7 +251,8 @@ fun LanguagesScreen(
                 style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.onBackground
             )
-            // Row of two chips with a visual arrow between them: SRC ----> TGT.
+            // Row of two chips with a visual translates to icon between them.
+            // Tapping a chip opens the corresponding language picker dialog.
             Row(
                 modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp),
                 horizontalArrangement = Arrangement.Center,
@@ -259,11 +263,8 @@ fun LanguagesScreen(
                     onClick = { showSourcePicker.value = true },
                     label = { Text(if (sourceLang.isNotEmpty()) sourceLang.uppercase() else unsetPlaceholder) }
                 )
-//                Text(
-//                    " ----> ",
-//                    modifier = Modifier.padding(horizontal = 16.dp),
-//                    color = MaterialTheme.colorScheme.onBackground
-//                )
+                // AutoMirrored TrendingFlat flips its direction for RTL locales,
+                // so the visual reading order always matches the device language.
                 Icon(Icons.AutoMirrored.Filled.TrendingFlat,
                     contentDescription = stringResource(R.string.lang_translates_to_cd),
                     modifier = Modifier.padding(horizontal = 16.dp),
@@ -277,7 +278,7 @@ fun LanguagesScreen(
 
             HorizontalDivider()
 
-            // Single LazyColumn with two logical sections — Downloaded / Available.
+            // Single LazyColumn with two logical sections, Downloaded and Available.
             LazyColumn(modifier = Modifier.fillMaxSize()) {
                 if (downloadedLangs.isNotEmpty()) {
                     // Section header for the downloaded group.
@@ -293,9 +294,9 @@ fun LanguagesScreen(
                         ListItem(
                             headlineContent = { Text(lang.name) },
                             supportingContent = {
-                                // English is the ML Kit NMT pivot — it's always present
+                                // English is the ML Kit NMT pivot. It is always present
                                 // and shares bytes with every other language pair, so
-                                // there isn't a meaningful standalone size to show.
+                                // there is no meaningful standalone size to show.
                                 if (lang.code == "en") {
                                     Text(stringResource(R.string.lang_core_preinstalled))
                                 } else if (lang.sizeMb > 0f) {
@@ -310,15 +311,17 @@ fun LanguagesScreen(
                                 }
                             },
                             trailingContent = {
-                                // English is the base model — can't be deleted, show a checkmark instead.
+                                // English is the base model and cannot be deleted, so
+                                // we show a checkmark in place of the delete icon.
                                 if (lang.code != "en") {
                                     IconButton(onClick = { onDelete(lang.code) }) {
                                         Icon(Icons.Default.Delete, contentDescription = stringResource(R.string.lang_delete_cd))
                                     }
                                 } else {
-                                    // Match IconButton's 40dp default so the check lines up
-                                    // visually with the Delete icon on neighboring rows.
-                                    // Still was a bit off visually so added another 3dp.
+                                    // Match IconButton's 40dp default so the check lines
+                                    // up visually with the Delete icon on neighboring
+                                    // rows. The extra 3dp tweaks alignment that was
+                                    // still slightly off in practice.
                                     Box(
                                         modifier = Modifier.size(45.dp),
                                         contentAlignment = Alignment.Center
@@ -345,7 +348,7 @@ fun LanguagesScreen(
                     items(availableLangs, key = { "av_${it.code}" }) { lang ->
                         ListItem(
                             headlineContent = { Text(lang.name) },
-                            // Extra line with "Downloading..." only while a download is active.
+                            // Extra line with "Downloading..." only while a download is in flight.
                             supportingContent = if (lang.code in downloadingLangs) {
                                 { Text(stringResource(R.string.lang_downloading)) }
                             } else null,
@@ -371,7 +374,8 @@ fun LanguagesScreen(
         }
     }
 
-    // Modal dialogs for picking source / target — shown based on local state flags above.
+    // Modal dialogs for picking source and target. Shown based on the local
+    // state flags toggled above.
     if (showSourcePicker.value) {
         LanguagePickerDialog(
             title = stringResource(R.string.lang_picker_source_title),
@@ -391,8 +395,8 @@ fun LanguagesScreen(
 }
 
 /**
- * Modal picker for choosing a source/target language from the downloaded set.
- * Empty list prompts the user to download a pack first.
+ * Modal picker for choosing a source or target language from the downloaded set.
+ * An empty list prompts the user to download a pack first.
  */
 @Composable
 private fun LanguagePickerDialog(
@@ -451,7 +455,7 @@ fun HistoryScreen(
         Column(
             modifier = Modifier.fillMaxSize().padding(16.dp)
         ) {
-            // Search box — every keystroke debounces via the VM's `loadHistory()`.
+            // Search box. Every keystroke triggers a fresh DB lookup via the VM's loadHistory().
             OutlinedTextField(
                 value = searchQuery,
                 onValueChange = onSearchChanged,
@@ -468,7 +472,8 @@ fun HistoryScreen(
             )
 
             if (records.isEmpty()) {
-                // Empty-state message — different wording for no-history vs. no-search-results.
+                // Empty state message. Different wording for no history at all vs. no
+                // matches for the current search query.
                 Spacer(modifier = Modifier.height(32.dp))
                 Text(
                     if (searchQuery.isBlank()) stringResource(R.string.history_empty) else stringResource(R.string.history_no_results),
@@ -476,8 +481,8 @@ fun HistoryScreen(
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             } else {
-                // Render one ListItem per record. `key = { it.id }` keeps scroll position
-                // stable across list mutations (e.g., deleting an item).
+                // Render one ListItem per record. key = { it.id } keeps scroll
+                // position stable across list mutations such as deleting an item.
                 LazyColumn {
                     items(records, key = { it.id }) { record ->
                         // Format timestamp for display. Use device locale for month/weekday names.
@@ -505,8 +510,9 @@ fun HistoryScreen(
 }
 
 /**
- * Settings overlay UI. Three theme toggle buttons plus a link to the Play Store
- * review page. Defaults on the parameters exist so Compose previews don't break.
+ * Single line theme button label. Calls onShrink when the laid out text would
+ * visually overflow its container, so the surrounding screen can drop the
+ * font size in lockstep across all three theme buttons.
  */
 @Composable
 private fun ThemeButtonLabel(
@@ -524,6 +530,12 @@ private fun ThemeButtonLabel(
         }
     )
 }
+
+/**
+ * Settings overlay UI. Three theme toggle buttons, an optional update banner
+ * and a link to the project's GitHub repo. Defaults on every parameter exist
+ * so Compose previews do not break when no callbacks are wired up.
+ */
 
 @Composable
 fun SettingsScreen(
@@ -551,23 +563,23 @@ fun SettingsScreen(
                 color = MaterialTheme.colorScheme.onBackground
             )
             Row(modifier = Modifier.padding(vertical = 16.dp)) {
-                // Pair of (user-facing label) → (persisted key).
+                // Pair of (user facing label) and (persisted key).
                 val themes = listOf(
                     stringResource(R.string.theme_system) to "system",
                     stringResource(R.string.theme_dark) to "dark",
                     stringResource(R.string.theme_light) to "light"
                 )
-                // Shrinks all three labels in lockstep if any would wrap to a second
-                // line — long translations (e.g. Russian "Системная", Maltese
-                // "Tas-sistema", Polish "Systemowy") can otherwise overflow the
-                // right-most button.
+                // Shrinks all three labels in lockstep if any would wrap to a
+                // second line. Long translations (for example Russian "Системная",
+                // Maltese "Tas-sistema", Polish "Systemowy") can otherwise
+                // overflow the right most button.
                 var themeFontSize by remember(themes) { mutableStateOf(14.sp) }
                 themes.forEachIndexed { index, (label, value) ->
-                    // Small horizontal gap between buttons (skip before the first).
+                    // Small horizontal gap between buttons. Skip before the first.
                     if (index > 0) Spacer(modifier = Modifier.width(8.dp))
                     val isSelected = currentTheme == value
                     val onShrink = { if (themeFontSize > 12.sp) themeFontSize = 12.sp }
-                    // Selected option is filled; the others are outlined for contrast.
+                    // Selected option is filled. The others are outlined for contrast.
                     if (isSelected) {
                         Button(onClick = { onThemeSelected(value) }) {
                             ThemeButtonLabel(label, themeFontSize, onShrink)
@@ -586,8 +598,8 @@ fun SettingsScreen(
 
             Spacer(modifier = Modifier.height(32.dp))
 
-            // "Update available" banner. Only rendered when the HTTP check against
-            // GitHub's version.json reports a higher versionCode than
+            // "Update available" banner. Only rendered when the HTTP check
+            // against GitHub's version.json reports a higher versionCode than
             // BuildConfig.VERSION_CODE. Tapping Update streams the new APK from
             // GitHub and hands it to the system package installer.
             if (updateAvailable) {
@@ -611,7 +623,7 @@ fun SettingsScreen(
                 )
             }
 
-            // `weight(1f)` pushes the footer text to the bottom of the column.
+            // weight(1f) pushes the footer text to the bottom of the column.
             Spacer(modifier = Modifier.weight(1f))
 
             Text(
@@ -624,9 +636,9 @@ fun SettingsScreen(
 }
 
 /**
- * Non-blocking "Update available" banner shown in Settings when the version check
- * finds a newer release on GitHub. Tapping Update kicks off the in-app APK download
- * and hands the result to the system package installer.
+ * Non blocking "Update available" banner shown in Settings when the version
+ * check finds a newer release on GitHub. Tapping Update kicks off the in app
+ * APK download and hands the result to the system package installer.
  */
 @Composable
 private fun UpdateAvailableBanner(
@@ -664,7 +676,8 @@ private fun UpdateAvailableBanner(
 
 /**
  * Overlay UI for viewing the translated PDF page by page.
- * Header row: Back | Title | Share. Body: vertically scrolling bitmaps.
+ * Header row contains a Back button on the left and a Share icon on the right.
+ * The body is a vertically scrolling list of page bitmaps.
  */
 @Composable
 fun PdfViewerScreen(
@@ -677,7 +690,7 @@ fun PdfViewerScreen(
         color = MaterialTheme.colorScheme.background
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
-            // Fixed header: back button left, title center, share icon right.
+            // Fixed header. Back button on the left, share icon on the right.
             Row(
                 modifier = Modifier.fillMaxWidth().padding(8.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -690,7 +703,7 @@ fun PdfViewerScreen(
             }
 
             if (pages.isEmpty()) {
-                // Still rendering bitmaps — show a centered spinner until they arrive.
+                // Still rendering bitmaps. Show a centered spinner until they arrive.
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     CircularProgressIndicator()
                 }
@@ -703,7 +716,7 @@ fun PdfViewerScreen(
                 ) {
                     items(pages.size) { index ->
                         Card(elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)) {
-                            // Bitmap → ImageBitmap conversion is a cheap wrapper (no copy).
+                            // The Bitmap to ImageBitmap conversion is a cheap wrapper, no copy.
                             Image(
                                 bitmap = pages[index].asImageBitmap(),
                                 contentDescription = stringResource(R.string.pdf_page_cd_format, index + 1),

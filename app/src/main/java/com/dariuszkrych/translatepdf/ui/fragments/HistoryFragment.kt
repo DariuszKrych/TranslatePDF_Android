@@ -13,12 +13,12 @@ import com.dariuszkrych.translatepdf.ui.screens.HistoryScreen
 import com.dariuszkrych.translatepdf.ui.theme.TranslatePDFTheme
 
 /**
- * Third ViewPager tab — displays previously completed translations from the
- * Room database, with search, delete, and tap-to-reopen support.
+ * Third ViewPager tab. Displays previously completed translations from the
+ * Room database with search, delete and tap to reopen support.
  */
 class HistoryFragment : Fragment() {
 
-    // Activity-scoped VM so we see the same history/search state as the rest of the app.
+    // Activity scoped VM so we see the same history and search state as the rest of the app.
     private val viewModel: TranslationViewModel by activityViewModels()
 
     override fun onCreateView(

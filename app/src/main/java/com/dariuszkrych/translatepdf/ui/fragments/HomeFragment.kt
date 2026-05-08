@@ -22,30 +22,32 @@ import com.dariuszkrych.translatepdf.ui.theme.TranslatePDFTheme
 import java.io.File
 
 /**
- * Primary landing fragment — shown on the first ViewPager tab.
+ * Primary landing fragment, shown on the first ViewPager tab.
  *
- * Lets the user pick a PDF, choose extraction method, start the translation,
- * and then view or download the result. Actual UI is a Compose [HomeScreen]
- * hosted inside a ComposeView; this class is the Android-framework glue.
+ * Lets the user pick a PDF, choose an extraction method, start the translation,
+ * and then view or download the result. The actual UI is a Compose [HomeScreen]
+ * hosted inside a ComposeView. This class is the Android framework glue.
  */
 class HomeFragment : Fragment() {
 
-    // Scoped to the Activity so state (selected PDF, progress, translated file) is
-    // shared across every tab and survives Fragment recreations.
+    // Scoped to the Activity so state (selected PDF, progress, translated file)
+    // is shared across every tab and survives Fragment recreations.
     private val viewModel: TranslationViewModel by activityViewModels()
 
     /**
      * Registered Activity Result launcher for the Storage Access Framework picker.
-     * Using `OpenDocument` (rather than a raw intent) gives us a persistable URI
+     * Using OpenDocument (rather than a raw intent) gives us a persistable URI
      * plus automatic permission handling.
      */
     private val pickPdf = registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
         uri ?: return@registerForActivityResult
-        // Keep the URI permission across process death / reboot so history replay works.
+        // Persist the URI permission across process death and reboot so history
+        // replay can re-read the file.
         requireContext().contentResolver.takePersistableUriPermission(
             uri, android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION
         )
-        // Resolve the user-facing file name from the content provider and hand both to the VM.
+        // Resolve the user facing file name from the content provider and hand
+        // both pieces of info to the ViewModel.
         val name = getFileName(uri)
         viewModel.setPdfFile(uri, name)
     }
@@ -84,8 +86,9 @@ class HomeFragment : Fragment() {
     }
 
     /**
-     * Copy the translated PDF from app-private storage into the device's Downloads folder.
-     * Uses MediaStore on Android Q+ (scoped storage), legacy File API below that.
+     * Copy the translated PDF from app private storage into the device's
+     * Downloads folder. Uses MediaStore on Android Q and newer (scoped storage),
+     * and the legacy File API on older releases.
      */
     private fun downloadTranslatedPdf() {
         val file = viewModel.translatedPdfFile ?: return
@@ -93,7 +96,7 @@ class HomeFragment : Fragment() {
         val outputName = "translated_${viewModel.selectedFileName}"
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            // Scoped-storage path: let MediaStore allocate the file in Downloads.
+            // Scoped storage path. Let MediaStore allocate the file in Downloads.
             val values = ContentValues().apply {
                 put(MediaStore.MediaColumns.DISPLAY_NAME, outputName)
                 put(MediaStore.MediaColumns.MIME_TYPE, "application/pdf")
@@ -101,14 +104,14 @@ class HomeFragment : Fragment() {
             }
             val uri = ctx.contentResolver.insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, values)
             if (uri != null) {
-                // Stream the file bytes into the newly-created MediaStore entry.
+                // Stream the file bytes into the newly created MediaStore entry.
                 ctx.contentResolver.openOutputStream(uri)?.use { out ->
                     file.inputStream().use { it.copyTo(out) }
                 }
                 Toast.makeText(ctx, getString(R.string.toast_saved_to_downloads), Toast.LENGTH_SHORT).show()
             }
         } else {
-            // Legacy path (pre-Q): write directly to the public Downloads directory.
+            // Legacy path on pre Q devices. Write directly to the public Downloads directory.
             @Suppress("DEPRECATION")
             val downloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
             val dest = File(downloadsDir, outputName)
@@ -118,7 +121,7 @@ class HomeFragment : Fragment() {
     }
 
     /**
-     * Look up the display name for a content-URI. Used so the UI shows
+     * Look up the display name for a content URI. Used so the UI shows
      * "myfile.pdf" instead of an opaque content:// path.
      */
     private fun getFileName(uri: android.net.Uri): String {

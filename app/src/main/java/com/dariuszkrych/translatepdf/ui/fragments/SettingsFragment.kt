@@ -21,13 +21,13 @@ import com.dariuszkrych.translatepdf.ui.theme.TranslatePDFTheme
 
 /**
  * Overlay fragment opened from the toolbar gear icon. Lets the user choose a
- * theme (System / Dark / Light) and open the project's GitHub repo.
+ * theme (System, Dark, Light) and open the project's GitHub repo.
  *
- * Persistence uses SharedPreferences (a tiny key/value store on disk) so the
- * chosen theme survives restarts — SQLite would be overkill for one string.
+ * Persistence uses SharedPreferences, a tiny key value store on disk, so the
+ * chosen theme survives restarts. SQLite would be overkill for a single string.
  */
 class SettingsFragment : Fragment() {
-    // Shared across fragments — same instance MainActivity uses to trigger the
+    // Shared across fragments. Same instance MainActivity uses to trigger the
     // update check at startup. Reading its Compose state here means the banner
     // flips on automatically if the HTTP request finishes while this screen is open.
     private val viewModel: TranslationViewModel by activityViewModels()
@@ -39,7 +39,7 @@ class SettingsFragment : Fragment() {
     ): View {
         return ComposeView(requireContext()).apply {
             setContent {
-                // Read the currently saved theme once; `remember` keeps it across recompositions.
+                // Read the currently saved theme once. remember keeps it across recompositions.
                 val prefs = requireContext().getSharedPreferences("app_prefs", Context.MODE_PRIVATE)
                 val currentTheme = remember {
                     mutableStateOf(prefs.getString("theme", "system") ?: "system")
@@ -47,7 +47,7 @@ class SettingsFragment : Fragment() {
 
                 TranslatePDFTheme {
                     // Reading these fields inside the composable lets Compose's snapshot
-                    // system re-render the banner when `checkForAppUpdate` flips them.
+                    // system rerender the banner when checkForAppUpdate flips them.
                     SettingsScreen(
                         currentTheme = currentTheme.value,
                         updateAvailable = viewModel.updateAvailable,
@@ -56,18 +56,18 @@ class SettingsFragment : Fragment() {
                         updateProgress = viewModel.updateProgress,
                         updateError = viewModel.updateError,
                         onUpdateClick = {
-                            // Stream the APK from GitHub straight into local cache and hand it
-                            // to the system package installer. No Play Store hop.
+                            // Stream the APK from GitHub straight into local cache and
+                            // hand it to the system package installer. No Play Store hop.
                             viewModel.downloadAndInstallUpdate(requireContext())
                         },
                         onThemeSelected = { theme ->
-                            // 1) Persist the choice so next launch opens with it already applied.
+                            // 1. Persist the choice so the next launch opens with it already applied.
                             prefs.edit().putString("theme", theme).apply()
-                            // 2) Update the local Compose state so the button selection re-renders.
+                            // 2. Update the local Compose state so the button selection rerenders.
                             currentTheme.value = theme
 
-                            // 3) Tell AppCompat to flip night mode at runtime — updates the activity
-                            //    and any downstream resource lookups immediately.
+                            // 3. Tell AppCompat to flip night mode at runtime. This updates
+                            //    the activity and any downstream resource lookups immediately.
                             val nightMode = when (theme) {
                                 "dark" -> AppCompatDelegate.MODE_NIGHT_YES
                                 "light" -> AppCompatDelegate.MODE_NIGHT_NO
@@ -75,8 +75,8 @@ class SettingsFragment : Fragment() {
                             }
                             AppCompatDelegate.setDefaultNightMode(nightMode)
 
-                            // 4) Keep the Compose theme flag in sync. For "system" we peek at the
-                            //    current uiMode to decide true/false right now.
+                            // 4. Keep the Compose theme flag in sync. For "system" we peek
+                            //    at the current uiMode to decide true or false right now.
                             ThemeState.isDark = when (theme) {
                                 "dark" -> true
                                 "light" -> false

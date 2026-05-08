@@ -12,12 +12,12 @@ import com.dariuszkrych.translatepdf.ui.screens.LanguagesScreen
 import com.dariuszkrych.translatepdf.ui.theme.TranslatePDFTheme
 
 /**
- * Second ViewPager tab — lets the user pick source/target languages and
- * download / delete offline ML Kit translation models.
+ * Second ViewPager tab. Lets the user pick source and target languages and
+ * download or delete offline ML Kit translation models.
  */
 class LanguagesFragment : Fragment() {
 
-    // Same shared VM instance as Home/History — selections survive tab switches.
+    // Same shared VM instance as Home and History. Selections survive tab switches.
     private val viewModel: TranslationViewModel by activityViewModels()
 
     override fun onCreateView(
@@ -45,8 +45,9 @@ class LanguagesFragment : Fragment() {
     }
 
     /**
-     * Re-scan the downloaded-model set each time the tab is shown so size estimates
-     * and download flags stay fresh (they can change while downloads finish in the bg).
+     * Rescan the downloaded model set each time the tab is shown so size
+     * estimates and download flags stay fresh. They can change while downloads
+     * finish in the background.
      */
     override fun onResume() {
         super.onResume()

@@ -24,9 +24,10 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 
 /**
  * The app's single Activity. Hosts a ViewPager2 with three main tabs
- * (Home / Languages / History) and an overlay FrameLayout for Settings and the PDF viewer.
+ * (Home, Languages, History) and an overlay FrameLayout that holds the
+ * Settings screen and the translated PDF viewer.
  *
- * Everything else in the app is a Fragment hosted inside this activity.
+ * Every other UI surface in the app is a Fragment hosted inside this activity.
  */
 class MainActivity : AppCompatActivity() {
 
@@ -34,11 +35,11 @@ class MainActivity : AppCompatActivity() {
     private lateinit var viewPager: ViewPager2
     // Bottom tab bar kept in sync with the ViewPager page.
     private lateinit var bottomNavigation: BottomNavigationView
-    // Thin colored strip drawn on top of the selected tab as an "underline" accent.
+    // Thin colored strip drawn on top of the selected tab as an underline accent.
     private lateinit var bottomNavIndicator: View
 
-    // Shared ViewModel — same instance the Fragments pick up via `activityViewModels()`.
-    // Used here to kick off the one-shot update check at startup.
+    // Shared ViewModel. Same instance the Fragments pick up via activityViewModels().
+    // Used here to kick off the one shot update check at startup.
     private val viewModel: TranslationViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -65,7 +66,8 @@ class MainActivity : AppCompatActivity() {
         val adapter = ViewPagerAdapter(this)
         viewPager.adapter = adapter
 
-        // Bottom-nav -> ViewPager: tapping a tab switches the page AND dismisses any open overlay.
+        // Bottom nav drives the ViewPager. Tapping a tab switches the page and also
+        // dismisses any open overlay so the user always lands on a clean primary tab.
         bottomNavigation.setOnItemSelectedListener { item ->
             closeOverlayIfOpen()
             when (item.itemId) {
@@ -78,7 +80,8 @@ class MainActivity : AppCompatActivity() {
             true
         }
 
-        // ViewPager -> Bottom-nav: keep the tab highlight correct when the user swipes pages.
+        // ViewPager drives the bottom nav. Keeps the tab highlight correct when the
+        // user swipes pages instead of tapping a tab.
         viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 val itemId = when (position) {
@@ -94,7 +97,7 @@ class MainActivity : AppCompatActivity() {
         })
 
         // Place the indicator under whichever tab starts selected (Home by default).
-        // `post` waits for layout so the item-view widths are real, not zero.
+        // post waits for layout so the item view widths are real, not zero.
         bottomNavigation.post {
             positionBottomNavIndicator(bottomNavigation.selectedItemId)
         }
@@ -110,18 +113,19 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        // Custom back handling: if the settings/PDF overlay is open, pressing BACK dismisses it
-        // instead of leaving the activity.
+        // Custom back handling. If the settings or PDF overlay is open, pressing back
+        // dismisses it instead of finishing the activity.
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 val container = findViewById<FrameLayout>(R.id.settingsContainer)
-                // KTX `isVisible` maps directly to VISIBLE/GONE — a clean replacement for the raw constants.
+                // KTX isVisible maps directly to VISIBLE and GONE, a clean replacement
+                // for the raw View visibility constants.
                 if (container.isVisible) {
-                    // Overlay was open — hide it and unwind the fragment back-stack.
+                    // Overlay was open. Hide it and unwind the fragment back stack.
                     container.isVisible = false
                     supportFragmentManager.popBackStack()
                 } else {
-                    // No overlay — fall through to the platform default (finish activity).
+                    // No overlay. Fall through to the platform default (finish activity).
                     isEnabled = false
                     onBackPressedDispatcher.onBackPressed()
                     isEnabled = true
@@ -134,11 +138,13 @@ class MainActivity : AppCompatActivity() {
             showSettings()
         }
 
-        // Paint toolbar/nav/status-bar to match current theme and poll GitHub for a new app version.
+        // Paint toolbar, bottom nav and status bar to match the current theme,
+        // then poll GitHub for a newer app version.
         updateSystemBars()
-        // GitHub-direct update check — HTTP GET decides if a newer version exists;
-        // the Settings screen shows a non-blocking banner. Tapping Update streams the
-        // APK from GitHub and hands it to the system package installer.
+        // Direct GitHub update check. An HTTP GET decides if a newer version exists.
+        // The Settings screen shows a non blocking banner when one does. Tapping
+        // Update streams the APK from GitHub and hands it to the system package
+        // installer (no Play Store hop).
         viewModel.checkForAppUpdate(BuildConfig.VERSION_CODE)
     }
 
@@ -163,7 +169,7 @@ class MainActivity : AppCompatActivity() {
         container.isVisible = true
         supportFragmentManager.beginTransaction()
             .replace(R.id.settingsContainer, PdfViewerFragment())
-            .addToBackStack("pdfViewer") // Named entry so we can specifically unwind this overlay.
+            .addToBackStack("pdfViewer") // Named entry so we can specifically unwind this overlay later.
             .commit()
     }
 
@@ -200,23 +206,26 @@ class MainActivity : AppCompatActivity() {
             bottomNavIndicator.setBackgroundColor(textColor)
         }
 
-        // Status bar + window background. `statusBarColor` is deprecated on API 35 but still works.
+        // Status bar and window background. statusBarColor is deprecated on API 35
+        // but still works on every supported API level the app targets.
         @Suppress("DEPRECATION")
         window.statusBarColor = bgColor
-        // KTX `Int.toDrawable()` wraps a color-int in a ColorDrawable — cleaner than calling the constructor.
+        // KTX Int.toDrawable() wraps a color int in a ColorDrawable. Cleaner than
+        // calling the ColorDrawable constructor directly.
         val windowBg = if (isDark) getColor(R.color.black) else getColor(R.color.white)
         window.setBackgroundDrawable(windowBg.toDrawable())
 
-        // Light-mode → dark status-bar icons and vice versa, so they're always visible.
+        // In light mode use dark status bar icons, in dark mode use light icons,
+        // so the icons are always readable against the bar background.
         WindowCompat.getInsetsController(window, window.decorView)
             .isAppearanceLightStatusBars = !isDark
     }
 
     /**
-     * Move the underline strip so it sits on top of the selected bottom-nav tab.
+     * Move the underline strip so it sits on top of the selected bottom nav tab.
      * Each menu item's view in a BottomNavigationView reuses its menu ID, so we can
-     * look the tab up directly by `selectedItemId`. Width is matched to the tab so
-     * the strip spans exactly that tab's horizontal extent.
+     * look the tab up directly by selectedItemId. The strip's width is matched to
+     * the tab so it spans exactly that tab's horizontal extent.
      */
     private fun positionBottomNavIndicator(selectedItemId: Int) {
         val itemView = bottomNavigation.findViewById<View>(selectedItemId) ?: return
@@ -225,7 +234,7 @@ class MainActivity : AppCompatActivity() {
             itemView.post { positionBottomNavIndicator(selectedItemId) }
             return
         }
-        // Resize the strip to the tab's width, then slide it horizontally into place.
+        // Resize the strip to match the tab width, then slide it horizontally into place.
         val lp = bottomNavIndicator.layoutParams
         if (lp.width != itemView.width) {
             lp.width = itemView.width
@@ -263,21 +272,23 @@ class MainActivity : AppCompatActivity() {
         container.isVisible = true
         supportFragmentManager.beginTransaction()
             .replace(R.id.settingsContainer, SettingsFragment())
-            .addToBackStack(null) // Anonymous entry — closed by the back button or gear toggle.
+            .addToBackStack(null) // Anonymous entry, closed by the back button or the gear toggle.
             .commit()
     }
 
     /**
      * Adapter that tells the ViewPager2 which fragment to build for each tab index.
      * FragmentStateAdapter handles lifecycle and fragment caching for us.
-     * Not `inner`: the adapter only uses its constructor argument, so avoiding the
-     * implicit outer-class reference sidesteps a potential leak and is idiomatic.
+     * Not declared inner because the adapter only uses its constructor argument.
+     * Avoiding the implicit outer class reference sidesteps a potential leak and is
+     * the idiomatic Kotlin choice.
      */
     private class ViewPagerAdapter(activity: AppCompatActivity) : FragmentStateAdapter(activity) {
         // We have exactly three primary tabs.
         override fun getItemCount(): Int = 3
 
-        // Map tab index → Fragment instance. Fallback protects against unexpected indices.
+        // Map a tab index to its Fragment instance. The fallback protects against
+        // unexpected indices that should never occur in practice.
         override fun createFragment(position: Int) = when (position) {
             0 -> HomeFragment()
             1 -> LanguagesFragment()

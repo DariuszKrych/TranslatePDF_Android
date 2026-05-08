@@ -7,12 +7,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 
 /**
- * Typography table handed to MaterialTheme. Only `bodyLarge` is customised;
- * every other role falls back to the Material 3 defaults, which is what we want
- * for a minimal theme. Adding more overrides below would tune titles/labels too.
+ * Typography table handed to MaterialTheme. Only bodyLarge is customised. Every
+ * other role falls back to the Material 3 defaults, which is what we want for a
+ * minimal theme. Adding more overrides below would tune titles and labels too.
  */
 val Typography = Typography(
-    // Default body text: 16sp regular with 24sp line height for comfortable reading.
+    // Default body text. 16sp regular with 24sp line height for comfortable reading.
     bodyLarge = TextStyle(
         fontFamily = FontFamily.Default,   // System default font (Roboto on most devices).
         fontWeight = FontWeight.Normal,

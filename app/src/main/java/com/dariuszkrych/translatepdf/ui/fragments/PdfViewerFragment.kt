@@ -17,14 +17,14 @@ import com.dariuszkrych.translatepdf.ui.theme.TranslatePDFTheme
 
 /**
  * Overlay fragment that shows the translated PDF as a scrollable list of page
- * bitmaps. Shown in the `settingsContainer` FrameLayout by MainActivity.
+ * bitmaps. Shown in the settingsContainer FrameLayout by MainActivity.
  *
  * Provides a Back button (hides the overlay) and a Share button (fires an
  * ACTION_SEND intent through a FileProvider so other apps can read the PDF).
  */
 class PdfViewerFragment : Fragment() {
 
-    // Activity-scoped VM so we reuse the same rendered bitmaps and file handle.
+    // Activity scoped VM so we reuse the same rendered bitmaps and file handle.
     private val viewModel: TranslationViewModel by activityViewModels()
 
     override fun onCreateView(
@@ -47,11 +47,12 @@ class PdfViewerFragment : Fragment() {
     }
 
     /**
-     * Launch a system "share" chooser for the translated PDF.
+     * Launch a system share chooser for the translated PDF.
      *
-     * We cannot hand the raw File path to other apps (scoped storage, FileUriExposedException)
-     * so we expose the file via our FileProvider authority declared in the manifest,
-     * then grant temporary read permission to the receiving app.
+     * We cannot hand the raw File path to other apps (scoped storage,
+     * FileUriExposedException), so we expose the file via our FileProvider
+     * authority declared in the manifest and grant temporary read permission
+     * to the receiving app.
      */
     private fun sharePdf() {
         val file = viewModel.translatedPdfFile ?: return
@@ -65,9 +66,9 @@ class PdfViewerFragment : Fragment() {
         val intent = Intent(Intent.ACTION_SEND).apply {
             type = "application/pdf"
             putExtra(Intent.EXTRA_STREAM, uri)
-            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION) // Temp grant for the chosen app.
+            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION) // Temporary grant for the chosen app.
         }
-        // `createChooser` forces the system picker even if a default handler is set.
+        // createChooser forces the system picker even if a default handler is set.
         startActivity(Intent.createChooser(intent, getString(R.string.pdf_share_chooser)))
     }
 }
