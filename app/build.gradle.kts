@@ -16,8 +16,8 @@ android {
         applicationId = "com.dariuszkrych.translatepdf"
         minSdk = 24
         targetSdk = 36
-        versionCode = 4
-        versionName = "bug_fixes2"
+        versionCode = 5
+        versionName = "showcase_update_1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
